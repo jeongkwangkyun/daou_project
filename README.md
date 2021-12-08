@@ -1,4 +1,10 @@
 # daou_project
+# 인턴사원 정광균 pr 요청드립니다.
+
+## 주요 테이블
+- 회원 
+  
+
 
 # erd 다이어그램
 ![daou_기술세미나](https://user-images.githubusercontent.com/59038419/145172365-05234d3c-3a3e-4392-aa5d-4ba46e781b36.png)
@@ -14,7 +20,6 @@
 
 ![시퀀스 다이어그램 drawio](https://user-images.githubusercontent.com/59038419/145172539-97ae79a7-0859-49af-b4d9-418699d8aea6.png)
 
-- ㄱ 
 
 # 좋은 하루되세요.
 # 감사합니다.
