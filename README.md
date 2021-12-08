@@ -14,5 +14,7 @@
 
 ![시퀀스 다이어그램 drawio](https://user-images.githubusercontent.com/59038419/145172539-97ae79a7-0859-49af-b4d9-418699d8aea6.png)
 
+- ㄱ 
+
 # 좋은 하루되세요.
 # 감사합니다.
