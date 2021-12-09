@@ -32,6 +32,22 @@
 
 ![시퀀스 다이어그램 drawio](https://user-images.githubusercontent.com/59038419/145172539-97ae79a7-0859-49af-b4d9-418699d8aea6.png)
 
+## UI 설계
+
+### 메인화면
+![01_메인화면](https://user-images.githubusercontent.com/59038419/145432056-1fcf8dcd-88e6-4a9a-8ecd-556bc3694dc9.png)
+
+### 상품 주문 페이지
+![02_상품 주문 페이지](https://user-images.githubusercontent.com/59038419/145432148-09fbd0f0-433e-42d7-b769-c7b38586253a.png)
+
+### 직접 결제 방식 페이지
+![03_직접결제방식](https://user-images.githubusercontent.com/59038419/145432254-5dd3c33d-6da8-405e-91dd-d24d0cd7f5f5.png)
+
+### 자동 결제 방식 페이지
+![04_자동결제방식](https://user-images.githubusercontent.com/59038419/145432313-53bd3796-9cee-45d9-9823-8670ba7f912f.png)
+
+### 환불 신청 페이지
+![05_환불신청 페이지](https://user-images.githubusercontent.com/59038419/145432388-b930ee97-272b-4173-bd7c-d3a1062e449a.png)
 
 # 좋은 하루되세요.
 # 감사합니다.
