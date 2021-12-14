@@ -4,7 +4,7 @@
 
 <mapper namespace="com.daou.project.model.mapper.ProductMapper">
 	<select id="listProduct" resultType="productDto">
-		select prd_no,prd_name,prd_price
+		select product_no,product_name,product_price
 		from product
 	</select>
 </mapper>
