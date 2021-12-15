@@ -18,39 +18,30 @@
           active-class="deep-purple--text text--accent-4"
         >
           <v-list-item router-link :to="{ name: 'Home' }">
-            <v-list-item-icon>
-              <v-icon>mdi-home</v-icon>
-            </v-list-item-icon>
             <v-list-item-title>Home</v-list-item-title>
           </v-list-item>
 
-          <v-list-item v-if="!userInfo" router-link :to="{ name: 'Order' }">
-            <v-list-item-icon>
-              <v-icon>mdi-account-plus</v-icon>
-            </v-list-item-icon>
+          <v-list-item router-link :to="{ name: 'Product' }">
             <v-list-item-title>상품주문</v-list-item-title>
           </v-list-item>
 
-          <v-list-item v-if="userInfo" router-link :to="{ name: 'Refund' }">
-            <v-list-item-icon>
-              <v-icon>mdi-account-circle</v-icon>
-            </v-list-item-icon>
+          <v-list-item router-link :to="{ name: 'Refund' }">
             <v-list-item-title>환불</v-list-item-title>
           </v-list-item>
 
-          <v-list-item v-if="!userInfo" router-link :to="{ name: 'SignIn' }">
+          <!-- <v-list-item v-if="!userInfo" router-link :to="{ name: 'SignIn' }">
             <v-list-item-icon>
               <v-icon>mdi-account</v-icon>
             </v-list-item-icon>
             <v-list-item-title>로그인</v-list-item-title>
-          </v-list-item>
+          </v-list-item> -->
 
-          <v-list-item v-if="userInfo" @click.prevent="onClickLogout">
+          <!-- <v-list-item @click.prevent="onClickLogout">
             <v-list-item-icon>
               <v-icon>mdi-logout-variant</v-icon>
             </v-list-item-icon>
             <v-list-item-title>로그아웃</v-list-item-title>
-          </v-list-item>
+          </v-list-item> -->
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
