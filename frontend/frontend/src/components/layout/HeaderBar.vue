@@ -18,23 +18,14 @@
           active-class="deep-purple--text text--accent-4"
         >
           <v-list-item router-link :to="{ name: 'Home' }">
-            <v-list-item-icon>
-              <v-icon>mdi-home</v-icon>
-            </v-list-item-icon>
             <v-list-item-title>Home</v-list-item-title>
           </v-list-item>
 
           <v-list-item router-link :to="{ name: 'Product' }">
-            <v-list-item-icon>
-              <v-icon>mdi-account-plus</v-icon>
-            </v-list-item-icon>
             <v-list-item-title>상품주문</v-list-item-title>
           </v-list-item>
 
           <v-list-item router-link :to="{ name: 'Refund' }">
-            <v-list-item-icon>
-              <v-icon>mdi-account-circle</v-icon>
-            </v-list-item-icon>
             <v-list-item-title>환불</v-list-item-title>
           </v-list-item>
 

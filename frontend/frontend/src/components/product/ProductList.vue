@@ -52,14 +52,13 @@ export default {
   created() {
     listProduct(
       (response) => {
-        // console.log(response);
         this.products = response.data;
         for (var i = 0; i < this.products.length; i++) {
           this.products[i].checked = false;
-          this.products[i].prd_cnt = 0;
-          this.products[i].total_price = 0;
+          this.products[i].productCnt = 0;
+          this.products[i].totalPrice = 0;
         }
-        // console.log(this.products);
+        console.log(this.products);
       },
       (error) => {
         console.log(error);
@@ -69,27 +68,28 @@ export default {
   methods: {
     ...mapActions(paymentStore, ["regPayment"]),
     change_state: function (product) {
-      this.products[product.prd_no - 1].checked = product.checked;
-      this.products[product.prd_no - 1].total_price = product.total_price;
-      this.products[product.prd_no - 1].prd_cnt = product.prd_cnt;
+      this.products[product.productNo - 1].checked = product.checked;
+      this.products[product.productNo - 1].totalPrice = product.totalPrice;
+      this.products[product.productNo - 1].productCnt = product.productCnt;
       // console.log(this.products);
     },
     payment(pay_type) {
       //직접결제;
-      console.log(this.products);
+      // console.log(this.products);
       for (var i = 0; i < this.products.length; i++) {
         if (this.products[i].checked == true) {
           this.payment_list.push({
-            prd_no: this.products[i].prd_no,
-            prd_cnt: this.products[i].prd_cnt,
-            prd_name: this.products[i].prd_name,
-            total_price: this.products[i].total_price,
+            productNo: this.products[i].productNo,
+            productCnt: this.products[i].productCnt,
+            productName: this.products[i].productName,
+            totalPrice: this.products[i].totalPrice,
+            payPrice: this.products[i].totalPrice,
           });
         }
       }
       this.regPayment(this.payment_list);
       if (pay_type == 1) {
-        console.log(this.payment_list);
+        // console.log(this.payment_list);
         if (this.payment_list.length == 0) {
           alert("구입하실 상품을 선택해주세요");
         } else {

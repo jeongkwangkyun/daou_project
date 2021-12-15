@@ -5,10 +5,11 @@ import createPersistedState from "vuex-persistedstate";
 Vue.use(Vuex);
 
 import paymentStore from "@/store/modules/paymentStore.js";
-
+import userInfoStore from "@/store/modules/userInfoStore.js";
 const store = new Vuex.Store({
   modules: {
     paymentStore,
+    userInfoStore,
   },
   plugins: [
     createPersistedState({
