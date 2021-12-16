@@ -14,7 +14,6 @@
           v-for="(product, index) in products"
           :key="index"
           v-bind="product"
-          @change_state="change_state"
         />
       </tbody>
     </v-simple-table>

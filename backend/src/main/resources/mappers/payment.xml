@@ -9,6 +9,7 @@
 		from coupon
 		where user_no = (select user_no from user where user_id =#{user_id})
 		and coupon_yn = 'n'
+        order by type desc
 	</select>
 	
 	<select id="getSaveMoney" parameterType="String" resultType="saveMoneyDto">
@@ -22,6 +23,14 @@
 		from point
 		where user_no = (select user_no from user where user_id =#{user_id})
 		and expiration_yn ='n'
+        order by expiration_date
 	</select>
 	
+	<insert id="registerTempTable" >
+	INSERT INTO payment
+	VALUES (0,1,1,1,0,0,"1111-11-11",'n')
+	<selectKey keyProperty="pay_no" resultType="paymentDto" order="AFTER">
+		SELECT LAST_INSERT_ID()
+	</selectKey>
+	</insert>
 </mapper>

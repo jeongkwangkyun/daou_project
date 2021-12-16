@@ -14,20 +14,20 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 	
-	private final SqlSession sqlSession;
+//	private final SqlSession sqlSession;
+	private final ProductMapper productMapper;
 	
 	@Override
 	public List<ProductDto> listProduct() throws Exception {
 		// TODO Auto-generated method stub
-		
-		return sqlSession.getMapper(ProductMapper.class).listProduct();
+		return productMapper.listProduct();
 	}
 
 	@Override
 	public ProductDto getProduct(int productNo) throws Exception {
 		// TODO Auto-generated method stub
 
-		return sqlSession.getMapper(ProductMapper.class).getProduct(productNo);
+		return productMapper.getProduct(productNo);
 	}
 
 }

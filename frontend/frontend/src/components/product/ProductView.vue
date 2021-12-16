@@ -11,12 +11,7 @@
 
       <v-row class="mb-1">
         <v-col class="text-left">
-          <v-btn
-            :disabled="loading"
-            class="ma-1"
-            color="grey"
-            outlined
-            @click="listProduct"
+          <v-btn class="ma-1" color="grey" outlined @click="listProduct"
             >목록</v-btn
           >
         </v-col>
@@ -121,7 +116,6 @@ export default {
         this.productCnt = 1;
       } else {
         this.totalPrice = this.productCnt * this.product.productPrice;
-        this.go_parent();
       }
     },
   },

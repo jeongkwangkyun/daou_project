@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.daou.project.model.CouponDto;
+import com.daou.project.model.PaymentDto;
 import com.daou.project.model.PointDto;
 import com.daou.project.model.ProductDto;
 import com.daou.project.model.SaveMoneyDto;
@@ -17,4 +18,6 @@ public interface PaymentMapper {
 	public List<CouponDto> getCoupon(String userId) throws SQLException;
 	public SaveMoneyDto getSaveMoney(String userId) throws SQLException;
 	public List<PointDto> getPoint(String userId) throws SQLException;
+	
+	public PaymentDto registerTempTable() throws SQLException;
 }

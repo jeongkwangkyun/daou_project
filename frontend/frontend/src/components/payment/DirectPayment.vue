@@ -84,6 +84,7 @@ export default {
       savemoney: 0,
       price: 0,
       coupon: 0,
+      userId: "root",
     };
   },
   created() {
@@ -108,13 +109,19 @@ export default {
         this.couponType = 20;
       } else if (this.coupon == 0.1) {
         this.couponType = 10;
-      } else if (this.coupon == 0.01) {
+      } else if (this.coupon == 0.05) {
         this.couponType = 5;
       }
-
+      // console.log(this.userId);
+      // console.log(this.payment_list[0].productNo);
+      // console.log(this.payment_list[0].productCnt);
+      // console.log(this.payment_list[0].totalPrice);
+      // console.log(this.couponType);
+      // console.log(this.point);
+      // console.log(this.savemoney);
       registPayment(
         {
-          userId: "root",
+          userId: this.userId,
           productNo: this.payment_list[0].productNo,
           productCnt: this.payment_list[0].productCnt,
           totalPrice: this.payment_list[0].totalPrice,
@@ -125,7 +132,7 @@ export default {
         },
         ({ data }) => {
           let msg = "등록 처리시 문제가 발생했습니다.";
-          if (data === "success") {
+          if (data == "success") {
             msg = "등록이 완료되었습니다.";
           }
           alert(msg);
