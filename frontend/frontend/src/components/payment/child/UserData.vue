@@ -80,9 +80,6 @@ export default {
           }
         }
         this.storeUserInfo();
-        this.$emit("change_couponState", this.couponData);
-        this.$emit("change_savemoneyState", this.savemoneyData);
-        this.$emit("change_pointState", this.pointData);
       },
       (error) => {
         console.log(error);
@@ -96,7 +93,7 @@ export default {
         couponA: this.couponData[0].cnt,
         couponB: this.couponData[1].cnt,
         couponC: this.couponData[2].cnt,
-        saveMoeny: this.userdata.savemoneyList.saveMoney,
+        saveMoney: this.userdata.savemoneyList.saveMoney,
         point: this.pointData.havePoint,
       });
       this.regUserInfo(this.info);

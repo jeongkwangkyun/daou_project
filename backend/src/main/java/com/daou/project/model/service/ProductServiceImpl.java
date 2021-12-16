@@ -23,4 +23,11 @@ public class ProductServiceImpl implements ProductService {
 		return sqlSession.getMapper(ProductMapper.class).listProduct();
 	}
 
+	@Override
+	public ProductDto getProduct(int productNo) throws Exception {
+		// TODO Auto-generated method stub
+
+		return sqlSession.getMapper(ProductMapper.class).getProduct(productNo);
+	}
+
 }
