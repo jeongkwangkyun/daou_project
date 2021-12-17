@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
 public class UserDataDto {
 	private List<PointDto> pointList;
 	private List<CouponDto> couponList;

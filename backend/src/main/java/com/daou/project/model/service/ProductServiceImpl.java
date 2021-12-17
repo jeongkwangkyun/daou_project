@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 	
-//	private final SqlSession sqlSession;
 	private final ProductMapper productMapper;
 	
 	@Override
