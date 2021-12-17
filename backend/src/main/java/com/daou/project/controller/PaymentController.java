@@ -27,15 +27,13 @@ public class PaymentController {
 	
 	private final PaymentService paymentService;
 	
-	@GetMapping("/{userId}")
-	public ResponseEntity<UserDataDto> listUserData(@PathVariable("userId")String userId) throws Exception{
-		return new ResponseEntity<UserDataDto>(paymentService.listUserData(userId),HttpStatus.OK);
+	@GetMapping("/{userNo}")
+	public ResponseEntity<UserDataDto> listUserData(@PathVariable("userNo")int userNo) throws Exception{
+		return new ResponseEntity<UserDataDto>(paymentService.listUserData(userNo),HttpStatus.OK);
 	}
 	
 	@PostMapping("/direct")
 	public ResponseEntity<String> registerPayment(@RequestBody RequestPaymentDto reqPaymentDto) throws Exception{
-
-		logger.info("registPayment - 호출");
 		if(paymentService.registerPayment(reqPaymentDto)) {
 			return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
 		}

@@ -52,6 +52,7 @@ export default {
       savemoneyData: { haveSavemoney: 0, useSavemoney: 0 },
       pointData: { havePoint: 0, usePoint: 0 },
       info: [],
+      userNo: 1,
     };
   },
   computed: {
@@ -59,7 +60,7 @@ export default {
   },
   created() {
     getUser(
-      "root",
+      this.userNo,
       (response) => {
         this.userdata = response.data;
         // 적립금

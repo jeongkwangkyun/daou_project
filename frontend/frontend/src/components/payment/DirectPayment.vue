@@ -84,7 +84,7 @@ export default {
       savemoney: 0,
       price: 0,
       coupon: 0,
-      userId: "root",
+      userNo: 1,
     };
   },
   created() {
@@ -112,16 +112,9 @@ export default {
       } else if (this.coupon == 0.05) {
         this.couponType = 5;
       }
-      // console.log(this.userId);
-      // console.log(this.payment_list[0].productNo);
-      // console.log(this.payment_list[0].productCnt);
-      // console.log(this.payment_list[0].totalPrice);
-      // console.log(this.couponType);
-      // console.log(this.point);
-      // console.log(this.savemoney);
       registPayment(
         {
-          userId: this.userId,
+          userNo: this.userNo,
           productNo: this.payment_list[0].productNo,
           productCnt: this.payment_list[0].productCnt,
           totalPrice: this.payment_list[0].totalPrice,

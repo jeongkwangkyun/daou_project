@@ -28,13 +28,11 @@ public class ProductController {
 	
 	@GetMapping
 	public ResponseEntity<List<ProductDto>> listProduct() throws Exception{
-		logger.info("listProduct 호출");
 		return new ResponseEntity<List<ProductDto>>(productService.listProduct(), HttpStatus.OK);
 	}
 	
 	@GetMapping("/{productNo}")
 	public ResponseEntity<ProductDto> getProduct(@PathVariable("productNo") int productNo) throws Exception{
-		logger.info("getProduct 호출");
 		return new ResponseEntity<ProductDto>(productService.getProduct(productNo), HttpStatus.OK);
 	}
 }
