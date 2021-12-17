@@ -39,8 +39,6 @@ export default {
     listProduct(
       (response) => {
         this.products = response.data;
-
-        console.log(this.products);
       },
       (error) => {
         console.log(error);

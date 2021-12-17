@@ -71,7 +71,6 @@ export default {
     getProduct(
       this.$route.params.productNo,
       (response) => {
-        console.log("Product no = " + this.$route.params.productNo);
         this.product = response.data;
       },
       (error) => {
