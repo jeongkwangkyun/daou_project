@@ -4,7 +4,11 @@ import Home from "../views/Home.vue";
 
 import Product from "@/views/Product.vue";
 import ProductList from "@/components/product/ProductList.vue";
-import Payment from "@/views/Payment.vue";
+import ProductView from "@/components/product/ProductView.vue";
+
+import Direct from "@/views/Direct.vue";
+import Auto from "@/views/Auto.vue";
+
 Vue.use(VueRouter);
 
 const routes = [
@@ -21,15 +25,25 @@ const routes = [
     children: [
       {
         path: "list",
-        name: ProductList,
+        name: "ProductList",
         component: ProductList,
+      },
+      {
+        path: "detail/:productNo",
+        name: "ProductView",
+        component: ProductView,
       },
     ],
   },
   {
-    path: "/payment",
-    name: "Payment",
-    component: Payment,
+    path: "/payment/direct",
+    name: "Direct",
+    component: Direct,
+  },
+  {
+    path: "/payment/auto",
+    name: "Auto",
+    component: Auto,
   },
 ];
 

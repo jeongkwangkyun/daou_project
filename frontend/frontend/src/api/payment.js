@@ -2,8 +2,15 @@ import { apiInstance } from "./index.js";
 
 const api = apiInstance();
 
-function getUser(user_id, success, fail) {
-  api.get(`/payment/${user_id}`).then(success).catch(fail);
+function getUser(user_no, success, fail) {
+  api.get(`/payment/${user_no}`).then(success).catch(fail);
 }
 
-export { getUser };
+function registPayment(payment, success, fail) {
+  api
+    .post(`/payment/direct`, JSON.stringify(payment))
+    .then(success)
+    .catch(fail);
+}
+
+export { getUser, registPayment };

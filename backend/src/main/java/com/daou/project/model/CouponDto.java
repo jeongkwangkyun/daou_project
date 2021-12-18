@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
 public class CouponDto {
 	private int couponNo;
 	private int userNo;

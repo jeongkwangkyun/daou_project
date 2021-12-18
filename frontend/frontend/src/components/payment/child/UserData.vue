@@ -52,6 +52,7 @@ export default {
       savemoneyData: { haveSavemoney: 0, useSavemoney: 0 },
       pointData: { havePoint: 0, usePoint: 0 },
       info: [],
+      userNo: 1,
     };
   },
   computed: {
@@ -59,7 +60,7 @@ export default {
   },
   created() {
     getUser(
-      "root",
+      this.userNo,
       (response) => {
         this.userdata = response.data;
         // 적립금
@@ -80,9 +81,6 @@ export default {
           }
         }
         this.storeUserInfo();
-        this.$emit("change_couponState", this.couponData);
-        this.$emit("change_savemoneyState", this.savemoneyData);
-        this.$emit("change_pointState", this.pointData);
       },
       (error) => {
         console.log(error);
@@ -96,7 +94,7 @@ export default {
         couponA: this.couponData[0].cnt,
         couponB: this.couponData[1].cnt,
         couponC: this.couponData[2].cnt,
-        saveMoeny: this.userdata.savemoneyList.saveMoney,
+        saveMoney: this.userdata.savemoneyList.saveMoney,
         point: this.pointData.havePoint,
       });
       this.regUserInfo(this.info);

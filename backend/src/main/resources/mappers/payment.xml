@@ -4,24 +4,72 @@
 
 <mapper namespace="com.daou.project.model.mapper.PaymentMapper">
 	
-	<select id="getCoupon" parameterType="String" resultType="couponDto">
-		select *
-		from coupon
-		where user_no = (select user_no from user where user_id =#{user_id})
-		and coupon_yn = 'n'
+	<select id="getCoupon" parameterType="int" resultType="couponDto">
+		SELECT *
+		FROM coupon
+		WHERE user_no = #{user_no}
+		AND coupon_yn = 'n'
+        ORDER BY type desc
 	</select>
 	
-	<select id="getSaveMoney" parameterType="String" resultType="saveMoneyDto">
-		select *
-		from save_money
-		where user_no = (select user_no from user where user_id =#{user_id})
+	<select id="getCouponNoDuplicated" parameterType="int" resultType="couponDto">
+		SELECT *
+		FROM coupon
+		WHERE user_no = #{user_no}
+		AND coupon_yn = 'n'
+		GROUP BY type
 	</select>
 	
-	<select id="getPoint" parameterType="String" resultType="pointDto">
-		select *
-		from point
-		where user_no = (select user_no from user where user_id =#{user_id})
-		and expiration_yn ='n'
+	<select id="getSaveMoney" parameterType="int" resultType="saveMoneyDto">
+		SELECT *
+		FROM save_money
+		WHERE user_no = (#{user_no})
 	</select>
 	
+	<select id="getPoint" parameterType="int" resultType="pointDto">
+		SELECT *
+		FROM point
+		WHERE user_no = #{user_no}
+		AND expiration_yn ='n'
+		AND balance_point > 0
+        ORDER BY expiration_date
+	</select>
+	
+	<insert id="registerTempTable" parameterType="paymentDto">
+		INSERT INTO payment  (pay_no,save_money_no,user_no,coupon_no, total_price, user_money,pay_date,refund_yn, use_savemoney)
+	 	VALUES (0,1,1,1,0,0,"1111-11-11",'n',0);
+	<selectKey keyProperty="payNo" resultType="int" order="AFTER">
+		SELECT MAX(pay_no)
+		FROM payment
+	</selectKey>
+	</insert>
+	
+	<update id="updateCoupon" parameterType="int">
+		UPDATE coupon
+		SET coupon_yn='y'
+		WHERE coupon_no = #{couponNo}
+	</update>
+	
+	<update id="updatePointTable" parameterType="pointDto">
+		UPDATE point
+		SET balance_point = #{balancePoint}
+		WHERE point_no= #{pointNo}  
+	</update>
+	
+	<insert id="insertPayPointTable" parameterType="payPointDto">
+		INSERT INTO payment_point(point_no, pay_no, user_no, use_point)
+		VALUES (#{pointNo}, #{payNo}, #{userNo}, #{usePoint})
+	</insert>
+	
+	<update id="updateSavemoney" parameterType="saveMoneyDto">
+		UPDATE save_money 
+		SET save_money = #{saveMoney}
+		WHERE save_money_no = #{savemoneyNo}
+	</update>
+	
+	<update id="updatePaymentTable" parameterType="paymentDto">
+		UPDATE payment
+		SET pay_date = now() , refund_yn = #{refundYn} , total_price = #{totalPrice}, user_money = #{userMoney}
+		WHERE pay_no = #{payNo}
+	</update>
 </mapper>

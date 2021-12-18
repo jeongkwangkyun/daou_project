@@ -11,4 +11,6 @@ import com.daou.project.model.ProductDto;
 public interface ProductMapper {
 	public List<ProductDto> listProduct() throws SQLException;
 
+	public ProductDto getProduct(int productNo) throws SQLException;
+
 }
