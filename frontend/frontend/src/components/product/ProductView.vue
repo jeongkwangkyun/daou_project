@@ -58,7 +58,7 @@ export default {
   data() {
     return {
       product: {},
-      productNo: "",
+      productNo: 0,
       productCnt: 0,
       totalPrice: 0,
       payment_list: [],
@@ -91,7 +91,13 @@ export default {
         });
       }
     },
-    autoPayment() {},
+    autoPayment() {
+      if (this.checkValue() == true) {
+        this.$router.push({
+          name: "Auto",params:
+        });
+      }
+    },
     checkValue() {
       if (this.productCnt == 0) {
         alert("1개 이상 선택하셔야 합니다.");
@@ -100,7 +106,7 @@ export default {
         this.payment_list.push({
           productNo: this.product.productNo,
           productName: this.product.productName,
-          productCnt: this.productCnt,
+          productCnt: this.productCnt * 1,
           totalPrice: this.totalPrice,
         });
         this.regPayment(this.payment_list);

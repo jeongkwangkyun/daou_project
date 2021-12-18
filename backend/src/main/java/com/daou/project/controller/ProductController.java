@@ -27,12 +27,12 @@ public class ProductController {
 	private final ProductService productService;
 	
 	@GetMapping
-	public ResponseEntity<List<ProductDto>> listProduct() throws Exception{
-		return new ResponseEntity<List<ProductDto>>(productService.listProduct(), HttpStatus.OK);
+	public ResponseEntity<List<ProductDto>> getAllProducts() throws Exception{
+		return new ResponseEntity<List<ProductDto>>(productService.getAllProducts(), HttpStatus.OK);
 	}
 	
 	@GetMapping("/{productNo}")
-	public ResponseEntity<ProductDto> getProduct(@PathVariable("productNo") int productNo) throws Exception{
+	public ResponseEntity<ProductDto> getProduct(@PathVariable("productNo") long productNo) throws Exception{
 		return new ResponseEntity<ProductDto>(productService.getProduct(productNo), HttpStatus.OK);
 	}
 }

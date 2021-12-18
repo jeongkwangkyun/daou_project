@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SaveMoneyDto {
-	private int savemoneyNo;
-	private int userNo;
+	private long savemoneyNo;
+	private long userNo;
 	private int saveMoney;
 }

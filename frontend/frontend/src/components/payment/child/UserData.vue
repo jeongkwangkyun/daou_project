@@ -9,26 +9,40 @@
 
       <v-list-item two-line>
         <v-list-item-content>
-          <v-list-item-title>적립금</v-list-item-title>
-          <li>{{ this.savemoneyData.haveSavemoney }}원</li>
+          <v-list-item-title>할인 쿠폰</v-list-item-title>
+          <div
+            v-if="
+              userInfo[0].couponA != 0 ||
+              userInfo[0].couponB != 0 ||
+              userInfo[0].couponC != 0
+            "
+          >
+            <div v-for="(item, index) in this.couponData" :key="index">
+              <li v-if="item.cnt > 0">{{ item.type }}% - {{ item.cnt }}개</li>
+            </div>
+          </div>
+
+          <div v-else>사용 가능한 할인 쿠폰이 없습니다.</div>
         </v-list-item-content>
       </v-list-item>
 
       <v-list-item two-line>
         <v-list-item-content>
           <v-list-item-title>포인트</v-list-item-title>
-          <li v-for="(item, index) in this.userdata.pointList" :key="index">
-            {{ item.balancePoint }}원 (~{{ item.expirationDate }})까지 사용 가능
-          </li>
+          <div v-if="userInfo[0].point != 0">
+            <li v-for="(item, index) in this.userdata.pointList" :key="index">
+              {{ item.balancePoint }}원 (~{{ item.expirationDate }})까지 사용
+              가능
+            </li>
+          </div>
+          <div v-else>사용 가능한 포인트가 없습니다.</div>
         </v-list-item-content>
       </v-list-item>
 
       <v-list-item two-line>
         <v-list-item-content>
-          <v-list-item-title>할인 쿠폰</v-list-item-title>
-          <div v-for="(item, index) in this.couponData" :key="index">
-            <li v-if="item.cnt > 0">{{ item.type }}% - {{ item.cnt }}개</li>
-          </div>
+          <v-list-item-title>적립금</v-list-item-title>
+          <li>{{ this.savemoneyData.haveSavemoney }}원</li>
         </v-list-item-content>
       </v-list-item>
     </v-card>
@@ -37,7 +51,7 @@
 
 <script>
 import { getUser } from "@/api/payment";
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapState } from "vuex";
 const userInfoStore = "userInfoStore";
 export default {
   name: "UserData",
@@ -56,7 +70,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(userInfoStore, ["userInfos"]),
+    ...mapState(userInfoStore, ["userInfo"]),
   },
   created() {
     getUser(

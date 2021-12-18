@@ -7,17 +7,17 @@ import lombok.Setter;
 @Setter
 public class PaymentDto {
 	// Payment 테이블에 담을 데이터
-	private int payNo;
-	private int savemoneyNo;
+	private long payNo;
+	private long savemoneyNo;
 	private int useSavemoney;
-	private int userNo;
-	private int couponNo;
+	private long userNo;
+	private long couponNo;
 	private int totalPrice;
 	private int userMoney;
 	private String payDate;
 	private char refundYn;
 	public PaymentDto() {};
-	public PaymentDto(int payNo, int savemoneyNo, int userNo, int couponNo, int totalPrice, int userMoney,
+	public PaymentDto(long payNo, long savemoneyNo, long userNo, long couponNo, int totalPrice, int userMoney,
 			String payDate, char refundYn) {
 		super();
 		this.payNo = payNo;

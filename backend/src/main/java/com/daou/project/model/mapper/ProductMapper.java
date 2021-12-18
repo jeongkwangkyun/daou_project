@@ -9,8 +9,7 @@ import com.daou.project.model.ProductDto;
 
 @Mapper
 public interface ProductMapper {
-	public List<ProductDto> listProduct() throws SQLException;
-
-	public ProductDto getProduct(int productNo) throws SQLException;
+	public List<ProductDto> getAllProducts() throws SQLException;
+	public ProductDto getProduct(long productNo) throws SQLException;
 
 }

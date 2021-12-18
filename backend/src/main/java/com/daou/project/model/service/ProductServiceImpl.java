@@ -17,15 +17,12 @@ public class ProductServiceImpl implements ProductService {
 	private final ProductMapper productMapper;
 	
 	@Override
-	public List<ProductDto> listProduct() throws Exception {
-		// TODO Auto-generated method stub
-		return productMapper.listProduct();
+	public List<ProductDto> getAllProducts() throws Exception {
+		return productMapper.getAllProducts();
 	}
 
 	@Override
-	public ProductDto getProduct(int productNo) throws Exception {
-		// TODO Auto-generated method stub
-
+	public ProductDto getProduct(long productNo) throws Exception {
 		return productMapper.getProduct(productNo);
 	}
 

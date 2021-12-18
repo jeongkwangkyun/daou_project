@@ -12,5 +12,8 @@ function registPayment(payment, success, fail) {
     .then(success)
     .catch(fail);
 }
+function getAutoPayment(orderDto, success, fail) {
+  api.post(`/payment/auto`, JSON.stringify(orderDto)).then(success).catch(fail);
+}
 
-export { getUser, registPayment };
+export { getUser, registPayment, getAutoPayment };

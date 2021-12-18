@@ -11,11 +11,12 @@ import com.daou.project.model.UserDataDto;
 
 
 public interface PaymentService {
-	public UserDataDto listUserData(int userNo) throws Exception;
-	public List<CouponDto> getCoupon(int userNo) throws Exception;
-	public SaveMoneyDto getSaveMoney(int userNo) throws Exception;
-	public List<PointDto> getPoint(int userNo) throws Exception;
+	public UserDataDto listUserData(long userNo) throws Exception;
+	public List<CouponDto> getCoupon(long userNo) throws Exception;
+	public SaveMoneyDto getSaveMoney(long userNo) throws Exception;
+	public List<PointDto> getPoint(long userNo) throws Exception;
 	public boolean registerPayment(RequestPaymentDto reqPaymentDto) throws Exception;
 	public int registerTempTable(PaymentDto paymentDto) throws Exception;
-	public List<CouponDto> getCouponNoDuplicated(int userNo) throws Exception;
+	public List<CouponDto> getCouponNoDuplicated(long userNo) throws Exception;
+	public RequestPaymentDto getAutoPayment(RequestPaymentDto orderDto) throws Exception;
 }

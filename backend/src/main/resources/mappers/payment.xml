@@ -4,30 +4,31 @@
 
 <mapper namespace="com.daou.project.model.mapper.PaymentMapper">
 	
-	<select id="getCoupon" parameterType="int" resultType="couponDto">
-		SELECT *
+	<select id="getCoupon" parameterType="long" resultType="couponDto">
+		SELECT coupon_no, user_no, type, coupon_yn
 		FROM coupon
 		WHERE user_no = #{user_no}
 		AND coupon_yn = 'n'
         ORDER BY type desc
 	</select>
 	
-	<select id="getCouponNoDuplicated" parameterType="int" resultType="couponDto">
-		SELECT *
+	<select id="getCouponNoDuplicated" parameterType="long" resultType="couponDto">
+		SELECT coupon_no, user_no, type, coupon_yn
 		FROM coupon
 		WHERE user_no = #{user_no}
 		AND coupon_yn = 'n'
 		GROUP BY type
+        ORDER BY type desc
 	</select>
 	
-	<select id="getSaveMoney" parameterType="int" resultType="saveMoneyDto">
-		SELECT *
+	<select id="getSaveMoney" parameterType="long" resultType="saveMoneyDto">
+		SELECT save_money_no, user_no, save_money
 		FROM save_money
 		WHERE user_no = (#{user_no})
 	</select>
 	
-	<select id="getPoint" parameterType="int" resultType="pointDto">
-		SELECT *
+	<select id="getPoint" parameterType="long" resultType="pointDto">
+		SELECT point_no, user_no, save_point, balance_point, expiration_date, expiration_yn
 		FROM point
 		WHERE user_no = #{user_no}
 		AND expiration_yn ='n'
@@ -44,7 +45,7 @@
 	</selectKey>
 	</insert>
 	
-	<update id="updateCoupon" parameterType="int">
+	<update id="updateCoupon" parameterType="long">
 		UPDATE coupon
 		SET coupon_yn='y'
 		WHERE coupon_no = #{couponNo}
@@ -72,4 +73,17 @@
 		SET pay_date = now() , refund_yn = #{refundYn} , total_price = #{totalPrice}, user_money = #{userMoney}
 		WHERE pay_no = #{payNo}
 	</update>
+	
+	<insert id="insertPayProducTable" parameterType="payProductDto">
+		INSERT INTO product_payment(product_no, pay_no, product_cnt)
+		VALUES (#{productNo}, #{payNo}, #{productCnt})
+	</insert>
+	
+	<select id="sumPoint" parameterType="long" resultType="int">
+		SELECT IFNULL(sum(balance_point),0)
+		FROM point
+		WHERE user_no = #{userNo}
+		AND expiration_yn ='n'
+		AND balance_point > 0
+	</select>
 </mapper>

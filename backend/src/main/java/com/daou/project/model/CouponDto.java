@@ -5,8 +5,8 @@ import lombok.Setter;
 
 @Getter
 public class CouponDto {
-	private int couponNo;
-	private int userNo;
+	private long couponNo;
+	private long userNo;
 	private int type;
 	private char couponYn;
 }
