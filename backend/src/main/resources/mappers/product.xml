@@ -13,4 +13,10 @@
 		FROM product
 		WHERE product_no=#{product_no}
 	</select>
+	
+	<select id="getProduct" parameterType="int" resultType="productDto" >
+		select product_no,product_name,product_price,product_content
+		from product
+		where product_no=#{product_no}
+	</select>
 </mapper>

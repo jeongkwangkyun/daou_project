@@ -94,7 +94,7 @@ export default {
     autoPayment() {
       if (this.checkValue() == true) {
         this.$router.push({
-          name: "Auto",params:
+          name: "Auto",
         });
       }
     },

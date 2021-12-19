@@ -10,9 +10,7 @@ import com.daou.project.model.PayPointDto;
 import com.daou.project.model.PayProductDto;
 import com.daou.project.model.PaymentDto;
 import com.daou.project.model.PointDto;
-import com.daou.project.model.ProductDto;
 import com.daou.project.model.SaveMoneyDto;
-import com.daou.project.model.UserDataDto;
 
 @Mapper
 public interface PaymentMapper {

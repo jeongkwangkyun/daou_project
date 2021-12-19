@@ -31,7 +31,7 @@ public class ProductController {
 		return new ResponseEntity<List<ProductDto>>(productService.getAllProducts(), HttpStatus.OK);
 	}
 	
-	@GetMapping("/{productNo}")
+  @GetMapping("/{productNo}")
 	public ResponseEntity<ProductDto> getProduct(@PathVariable("productNo") long productNo) throws Exception{
 		return new ResponseEntity<ProductDto>(productService.getProduct(productNo), HttpStatus.OK);
 	}

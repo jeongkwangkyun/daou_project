@@ -41,7 +41,7 @@ public class PaymentController {
 		}
 		return new ResponseEntity<String>(FAIL, HttpStatus.NO_CONTENT);
 	}
-	
+
 	@PostMapping("/auto")
 	public ResponseEntity<RequestPaymentDto> getAutoPayment(@RequestBody RequestPaymentDto orderDto) throws Exception{
 		return new ResponseEntity<RequestPaymentDto>(paymentService.getAutoPayment(orderDto), HttpStatus.OK);
