@@ -9,7 +9,8 @@ import ProductView from "@/components/product/ProductView.vue";
 import Direct from "@/views/Direct.vue";
 import Auto from "@/views/Auto.vue";
 
-// import Refund from "@/view/Refund.vue";
+import Refund from "@/views/Refund.vue";
+
 Vue.use(VueRouter);
 
 const routes = [
@@ -46,11 +47,11 @@ const routes = [
     name: "Auto",
     component: Auto,
   },
-  // {
-  //   path: "/refund",
-  //   name: "Refund",
-  //   component: Refund,
-  // },
+  {
+    path: "/refund",
+    name: "Refund",
+    component: Refund,
+  },
 ];
 
 const router = new VueRouter({

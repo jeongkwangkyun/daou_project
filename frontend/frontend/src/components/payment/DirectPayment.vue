@@ -84,7 +84,7 @@ export default {
       savemoney: 0,
       price: 0,
       coupon: 0,
-      userNo: 1,
+      userNo: 2,
     };
   },
   created() {

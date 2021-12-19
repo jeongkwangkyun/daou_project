@@ -70,7 +70,7 @@
 	
 	<update id="updatePaymentTable" parameterType="paymentDto">
 		UPDATE payment
-		SET pay_date = now() , refund_yn = #{refundYn} , total_price = #{totalPrice}, user_money = #{userMoney}
+		SET pay_date = now() ,user_no=#{userNo} ,refund_yn = #{refundYn} , total_price = #{totalPrice}, user_money = #{userMoney} ,use_savemoney = #{useSavemoney}, save_money_no = #{savemoneyNo}, coupon_no = #{couponNo}
 		WHERE pay_no = #{payNo}
 	</update>
 	

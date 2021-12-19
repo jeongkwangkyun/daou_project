@@ -13,4 +13,6 @@
 		FROM product
 		WHERE product_no=#{product_no}
 	</select>
+	
+	
 </mapper>

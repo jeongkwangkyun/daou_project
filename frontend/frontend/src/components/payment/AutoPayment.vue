@@ -43,7 +43,7 @@ export default {
   data() {
     return {
       paymentData: [],
-      userNo: 1,
+      userNo: 2,
       coupon: 0,
       point: 0,
       savemoney: 0,

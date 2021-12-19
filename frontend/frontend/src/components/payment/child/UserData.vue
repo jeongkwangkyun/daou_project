@@ -66,7 +66,7 @@ export default {
       savemoneyData: { haveSavemoney: 0, useSavemoney: 0 },
       pointData: { havePoint: 0, usePoint: 0 },
       info: [],
-      userNo: 1,
+      userNo: 2,
     };
   },
   computed: {

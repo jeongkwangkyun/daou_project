@@ -2,7 +2,6 @@ package com.daou.project.model.service;
 
 import java.util.List;
 
-import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Service;
 
 import com.daou.project.model.ProductDto;

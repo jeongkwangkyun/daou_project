@@ -131,11 +131,11 @@ public class PaymentServiceImpl implements PaymentService {
 						.pointNo(updatePoint.getPointNo())
 						.payNo(paymentDto.getPayNo())
 						.userNo(paymentDto.getUserNo())
-						.usePoint(usePoint)
 						.build();
 				
 				if(remainPoint>updatePoint.getBalancePoint()) {	
 					updatePoint.setBalancePoint(0);
+					registPoint.setUsePoint(usePoint);
 					paymentMapper.updatePointTable(updatePoint);
 					paymentMapper.insertPayPointTable(registPoint);
 					remainPoint -= usePoint;
@@ -143,6 +143,7 @@ public class PaymentServiceImpl implements PaymentService {
 				else {
 					updatePoint.setBalancePoint(usePoint - remainPoint);
 					paymentMapper.updatePointTable(updatePoint);
+					registPoint.setUsePoint(remainPoint);
 					paymentMapper.insertPayPointTable(registPoint);
 					break;
 				}
