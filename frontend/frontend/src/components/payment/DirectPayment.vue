@@ -116,7 +116,7 @@ export default {
         {
           userNo: this.userNo,
           productNo: this.payment_list[0].productNo,
-          productCnt: this.payment_list[0].productCnt,
+          productCnt: this.payment_list[0].productCnt * 1,
           totalPrice: this.payment_list[0].totalPrice,
           payCoupon: this.couponType,
           payPoint: this.point,
@@ -132,7 +132,15 @@ export default {
           this.movePage();
         },
         (error) => {
+          alert(error);
           console.log(error);
+        },
+        (wrong) => {
+          let msg = "결제 수단이 문제가 발생했습니다.";
+          console.log(wrong);
+          if (wrong == "wrong") {
+            alert(msg);
+          }
         }
       );
     },

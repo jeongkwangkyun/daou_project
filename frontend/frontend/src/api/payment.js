@@ -6,11 +6,12 @@ function getUser(user_no, success, fail) {
   api.get(`/payment/${user_no}`).then(success).catch(fail);
 }
 
-function registPayment(payment, success, fail) {
+function registPayment(payment, success, fail, wrong) {
   api
     .post(`/payment/direct`, JSON.stringify(payment))
     .then(success)
-    .catch(fail);
+    .catch(fail)
+    .catch(wrong);
 }
 function getAutoPayment(orderDto, success, fail) {
   api.post(`/payment/auto`, JSON.stringify(orderDto)).then(success).catch(fail);

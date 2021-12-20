@@ -5,9 +5,9 @@
 
       <v-toolbar-title>Daou몰 </v-toolbar-title>
       <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn right color="deep-purple" v-if="userInfo" @click="moveMypage()"
+        <!-- <v-btn right color="deep-purple" v-if="userInfo" @click="moveMypage()"
           >{{ userInfo.userid }}님 안녕하세요</v-btn
-        >
+        > -->
       </v-toolbar-items>
     </v-app-bar>
 
