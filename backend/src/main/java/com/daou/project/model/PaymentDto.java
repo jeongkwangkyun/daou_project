@@ -13,6 +13,10 @@ public class PaymentDto {
 	private int useSavemoney;
 	private long userNo;
 	private long couponNo;
+	private int totalPrice;
+	private int userMoney;
+	private String payDate;
+	private char refundYn;
 	public PaymentDto() {};
 
 	public PaymentDto(long payNo, long savemoneyNo, long userNo, long couponNo, int totalPrice, int userMoney,
