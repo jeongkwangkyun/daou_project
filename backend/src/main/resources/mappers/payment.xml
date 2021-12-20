@@ -45,7 +45,7 @@
 	</selectKey>
 	</insert>
 	
-	<update id="updateCoupon" parameterType="long">
+	<update id="updateUsedCoupon" parameterType="long">
 		UPDATE coupon
 		SET coupon_yn='y'
 		WHERE coupon_no = #{couponNo}
@@ -79,7 +79,7 @@
 		VALUES (#{productNo}, #{payNo}, #{productCnt})
 	</insert>
 	
-	<select id="sumPoint" parameterType="long" resultType="int">
+	<select id="userEnablePoint" parameterType="long" resultType="int">
 		SELECT IFNULL(sum(balance_point),0)
 		FROM point
 		WHERE user_no = #{userNo}

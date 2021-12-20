@@ -20,11 +20,11 @@ public interface PaymentMapper {
 	
 	public int registerTempTable(PaymentDto paymentDto) throws SQLException;
 	public List<CouponDto> getCouponNoDuplicated(long userNo) throws SQLException;
-	public void updateCoupon(long couponNo) throws SQLException;
+	public void updateUsedCoupon(long couponNo) throws SQLException;
 	public void updatePointTable(PointDto updatePoint) throws SQLException;
 	public void insertPayPointTable(PayPointDto registPoint) throws SQLException;
 	public void updateSavemoney(SaveMoneyDto savemoneyList) throws SQLException;
 	public void updatePaymentTable(PaymentDto paymentDto) throws SQLException;
 	public void insertPayProducTable(PayProductDto payProductDto) throws SQLException;
-	public int sumPoint(long userNo) throws SQLException;
+	public int userEnablePoint(long userNo) throws SQLException;
 }

@@ -5,15 +5,15 @@ import lombok.Getter;
 @Getter
 public enum CouponEnum {
 	
-	COUPON_A(20,30000),
-	COUPON_B(10,20000),
-	COUPON_C(5,10000);
+	COUPON20(20,30000),
+	COUPON10(10,20000),
+	COUPON5(5,10000);
 	
-	private final int type;
+	private final int discountPercent;
 	private final int price;
 	
-	CouponEnum(int type, int price) {
-		this.type = type;
+	CouponEnum(int discountPercent, int price) {
+		this.discountPercent = discountPercent;
 		this.price = price;
 	}
 }

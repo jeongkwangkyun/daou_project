@@ -1,5 +1,7 @@
 package com.daou.proejct.exception;
 
+import java.sql.SQLException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,12 @@ public class ExceptionController extends ResponseEntityExceptionHandler{
 	@ExceptionHandler(value = MethodArgumentNotValidException.class)
 	public ResponseEntity<String> paymentValidationExceptions(MethodArgumentNotValidException ex){
 	    logger.info("paymentValidationExceptions class 출력"); 
+		return new ResponseEntity<String>(WRONG, HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(value = SQLException.class)
+	public ResponseEntity<String> invalidSqlExceptions(SQLException e){
+	    logger.info("invalidSqlExceptions class 출력"); 
 		return new ResponseEntity<String>(WRONG, HttpStatus.BAD_REQUEST);
 	}
 }

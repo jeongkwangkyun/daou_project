@@ -31,5 +31,12 @@ public class PaymentDto {
 		this.payDate = payDate;
 		this.refundYn = refundYn;
 	}
+
+	public void setPayment(int totalPrice, int userMoney, char refundYn) {
+		this.totalPrice = totalPrice;
+		this.userMoney = userMoney;
+		this.refundYn = refundYn;
+	}
+
 	
 }
