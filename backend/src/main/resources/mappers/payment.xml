@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.daou.project.model.mapper.PaymentMapper">
+	
+	<select id="getCoupon" parameterType="long" resultType="couponDto">
+		SELECT coupon_no, user_no, type, coupon_yn
+		FROM coupon
+		WHERE user_no = #{user_no}
+		AND coupon_yn = 'n'
+        ORDER BY type desc
+	</select>
+	
+	<select id="getCouponNoDuplicated" parameterType="long" resultType="couponDto">
+		SELECT coupon_no, user_no, type, coupon_yn
+		FROM coupon
+		WHERE user_no = #{user_no}
+		AND coupon_yn = 'n'
+		GROUP BY type
+        ORDER BY type desc
+	</select>
+	
+	<select id="getSaveMoney" parameterType="long" resultType="saveMoneyDto">
+		SELECT save_money_no, user_no, save_money
+		FROM save_money
+		WHERE user_no = (#{user_no})
+	</select>
+	
+	<select id="getPoint" parameterType="long" resultType="pointDto">
+		SELECT point_no, user_no, save_point, balance_point, expiration_date, expiration_yn
+		FROM point
+		WHERE user_no = #{user_no}
+		AND expiration_yn ='n'
+		AND balance_point > 0
+        ORDER BY expiration_date
+	</select>
+	
+	<insert id="registerTempTable" parameterType="paymentDto">
+		INSERT INTO payment  (pay_no,save_money_no,user_no,coupon_no, total_price, user_money,pay_date,refund_yn, use_savemoney)
+	 	VALUES (0,1,1,1,0,0,"1111-11-11",'n',0);
+	<selectKey keyProperty="payNo" resultType="int" order="AFTER">
+		SELECT MAX(pay_no)
+		FROM payment
+	</selectKey>
+	</insert>
+	
+	<update id="updateCoupon" parameterType="long">
+		UPDATE coupon
+		SET coupon_yn='y'
+		WHERE coupon_no = #{couponNo}
+	</update>
+	
+	<update id="updatePointTable" parameterType="pointDto">
+		UPDATE point
+		SET balance_point = #{balancePoint}
+		WHERE point_no= #{pointNo}  
+	</update>
+	
+	<insert id="insertPayPointTable" parameterType="payPointDto">
+		INSERT INTO payment_point(point_no, pay_no, user_no, use_point)
+		VALUES (#{pointNo}, #{payNo}, #{userNo}, #{usePoint})
+	</insert>
+	
+	<update id="updateSavemoney" parameterType="saveMoneyDto">
+		UPDATE save_money 
+		SET save_money = #{saveMoney}
+		WHERE save_money_no = #{savemoneyNo}
+	</update>
+	
+	<update id="updatePaymentTable" parameterType="paymentDto">
+		UPDATE payment
+		SET pay_date = now() ,user_no=#{userNo} ,refund_yn = #{refundYn} , total_price = #{totalPrice}, user_money = #{userMoney} ,use_savemoney = #{useSavemoney}, save_money_no = #{savemoneyNo}, coupon_no = #{couponNo}
+		WHERE pay_no = #{payNo}
+	</update>
+	
+	<insert id="insertPayProducTable" parameterType="payProductDto">
+		INSERT INTO product_payment(product_no, pay_no, product_cnt)
+		VALUES (#{productNo}, #{payNo}, #{productCnt})
+	</insert>
+	
+	<select id="sumPoint" parameterType="long" resultType="int">
+		SELECT IFNULL(sum(balance_point),0)
+		FROM point
+		WHERE user_no = #{userNo}
+		AND expiration_yn ='n'
+		AND balance_point > 0
+	</select>
+</mapper>

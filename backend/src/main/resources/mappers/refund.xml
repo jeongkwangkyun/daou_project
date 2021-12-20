@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.daou.project.model.mapper.RefundMapper">
+	<select id="getAllRefunds" parameterType="long" resultType="refundDto">
+		SELECT P.pay_no, Prd.product_name, PrdP.product_cnt, P.total_price, C.type , sum(PayP.use_point) use_point, P.use_savemoney, P.user_money, P.pay_date, P.refund_yn
+		FROM coupon C, product_payment PrdP, product Prd,
+		payment P LEFT OUTER JOIN payment_point PayP 
+		ON P.pay_no = PayP.pay_no
+		WHERE P.user_no = #{userNo}
+		AND P.pay_no = PrdP.pay_no
+		AND P.coupon_no = C.coupon_no
+		AND P.pay_no = PrdP.pay_no
+		AND PrdP.product_no = Prd.product_no
+		GROUP BY P.pay_no
+	</select>
+	
+	<select id="getPaymentData" parameterType="long" resultType="paymentDto">
+		SELECT pay_no, save_money_no, user_no, coupon_no, total_price, user_money, pay_date, refund_yn, use_savemoney
+		FROM payment
+		WHERE pay_no = #{payNo}
+	</select>
+	
+	<update id="updateSavemoneyTable" parameterType="paymentDto">
+		UPDATE save_money as SM ,(SELECT use_savemoney FROM payment WHERE pay_no = #{payNo}) as P
+		SET SM.save_money = SM.save_money + P.use_savemoney
+		WHERE SM.save_money_no = #{savemoneyNo};
+	</update>
+	
+	<update id="updateCouponTable" parameterType="long">
+		UPDATE coupon
+		SET coupon_yn = 'n'
+		WHERE coupon_no = #{couponNo}
+	</update>
+	
+	<select id="getPoint" parameterType="long" resultType="payPointDto">
+		SELECT point_no, pay_no, user_no, use_point
+		FROM payment_point
+		where pay_no = #{payNo}
+	</select>
+	
+	<update id="updatePointTable" parameterType="payPointDto">
+		UPDATE point
+		SET balance_point = balance_point + #{usePoint}
+		WHERE point_no = #{pointNo}
+		AND expiration_yn = 'n'
+	</update>
+	
+	<update id="updatePaymentTable" parameterType="long">
+		UPDATE payment
+		SET refund_yn = 'y'
+		WHERE pay_no = #{payNo}
+	</update>
+	
+	<insert id="insertRefundTable" parameterType="refundDoneDto">
+		INSERT INTO refund (pay_no, user_no, refund_date)
+		VALUES (#{payNo}, #{userNo}, now()) 
+	</insert>
+</mapper>
