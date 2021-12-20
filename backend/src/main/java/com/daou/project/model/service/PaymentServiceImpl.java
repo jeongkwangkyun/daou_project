@@ -9,6 +9,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.daou.project.Enum.CouponEnum;
 import com.daou.project.model.CouponDto;
 import com.daou.project.model.PayPointDto;
 import com.daou.project.model.PayProductDto;
@@ -227,12 +228,12 @@ public class PaymentServiceImpl implements PaymentService {
 	private RequestPaymentDto applyCoupon(RequestPaymentDto orderDto) throws Exception {
 		int userMoney = orderDto.getUserMoney();
 		
-		if(orderDto.getTotalPrice() >= 10000) {			
+		if(orderDto.getTotalPrice() >= CouponEnum.COUPON_C.getPrice()) {			
 			List<CouponDto> couponList = getCouponNoDuplicated(orderDto.getUserNo());
 			int coupon = 0;
 			// 쿠폰 가격별 로직 처리해줘야함
 			if(couponList.size() !=0) {
-				if(orderDto.getTotalPrice() >= 30000) {
+				if(orderDto.getTotalPrice() >= CouponEnum.COUPON_A.getPrice()) {
 					coupon = couponList.get(0).getType();
 				}
 				else {					
@@ -241,26 +242,26 @@ public class PaymentServiceImpl implements PaymentService {
 					int couponC = 0;
 					int listSize = couponList.size();
 					for(int i = 0 ; i < listSize ; i++) {
-						if(couponList.get(i).getType() == 20) {
+						if(couponList.get(i).getType() == CouponEnum.COUPON_A.getType()) {
 							couponA +=1;
 						}
-						else if(couponList.get(i).getType() == 10) {
+						else if(couponList.get(i).getType() == CouponEnum.COUPON_B.getType()) {
 							couponB += 1;
 						}
-						else if(couponList.get(i).getType() == 5) {
+						else if(couponList.get(i).getType() == CouponEnum.COUPON_C.getType()) {
 							couponC += 1;
 						}
 					}
-					if(orderDto.getTotalPrice()>=20000) {
+					if(orderDto.getTotalPrice()>=CouponEnum.COUPON_B.getPrice()) {
 						if(couponB != 0 ) {
-							coupon = 10;
+							coupon = CouponEnum.COUPON_B.getType(); 
 						}
 						else if(couponC != 0 ) {
-							coupon = 5;
+							coupon = CouponEnum.COUPON_C.getType();
 						}
 					}
 					else if(couponC != 0){
-						coupon = 5;
+						coupon = CouponEnum.COUPON_C.getType();
 					}
 				}
 			}
