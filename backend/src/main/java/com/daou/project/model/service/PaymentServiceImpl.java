@@ -9,6 +9,9 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.daou.proejct.exception.CouponException;
+import com.daou.proejct.exception.PointException;
+import com.daou.proejct.exception.SavemoneyException;
 import com.daou.project.Enum.CouponEnum;
 import com.daou.project.model.CouponDto;
 import com.daou.project.model.PayPointDto;
@@ -56,8 +59,9 @@ public class PaymentServiceImpl implements PaymentService {
 	@Override
 	@Transactional
 	public boolean registerPayment(RequestPaymentDto reqPaymentDto) throws Exception {
+		
 		UserDataDto userDataDto = new UserDataDto(getPoint(reqPaymentDto.getUserNo()), getCouponNoDuplicated(reqPaymentDto.getUserNo()), getSaveMoney(reqPaymentDto.getUserNo()));
-
+		
 		PaymentDto paymentDto = new PaymentDto();
 		paymentDto.setUserNo(reqPaymentDto.getUserNo());
 
@@ -78,7 +82,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 		//6. product_payment 테이블 등록
 		insertPayProducTable(new PayProductDto(reqPaymentDto.getProductNo(),paymentDto.getPayNo(),reqPaymentDto.getProductCnt()));
-
+		
 		return true;
 	}
 
@@ -97,6 +101,9 @@ public class PaymentServiceImpl implements PaymentService {
 	private PaymentDto registerSavemoneyTable(SaveMoneyDto savemoneyList, RequestPaymentDto reqPaymentDto,
 			PaymentDto paymentDto) throws SQLException {
 		long savemoneyNo = 1;
+		if(reqPaymentDto.getPaySaveMoney() > savemoneyList.getSaveMoney()) {
+			throw new SavemoneyException();
+		}
 		if (reqPaymentDto.getPaySaveMoney() !=0) {
 			savemoneyNo = savemoneyList.getSavemoneyNo();
 			paymentDto.setUseSavemoney(reqPaymentDto.getPaySaveMoney());
@@ -114,7 +121,7 @@ public class PaymentServiceImpl implements PaymentService {
 	private void registerPointTable(List<PointDto> pointList, RequestPaymentDto reqPaymentDto,
 			PaymentDto paymentDto) throws SQLException {
 		int remainPoint = reqPaymentDto.getPayPoint();
-
+		
 		if(remainPoint > 0) {
 			int listSize = pointList.size();
 			for(int i = 0 ; i < listSize; i++) {
@@ -141,11 +148,15 @@ public class PaymentServiceImpl implements PaymentService {
 					paymentMapper.updatePointTable(updatePoint);
 					registPoint.setUsePoint(remainPoint);
 					paymentMapper.insertPayPointTable(registPoint);
+					remainPoint = 0;
 					break;
 				}
 			}
+			if(remainPoint > 0) {
+				throw new PointException();
+			}
 		}
-
+		
 	}
 
 	private PaymentDto registerCouponTable(List<CouponDto> couponList, RequestPaymentDto reqPaymentDto,PaymentDto paymentDto) throws SQLException {

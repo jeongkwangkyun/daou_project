@@ -2,6 +2,8 @@ package com.daou.project.controller;
 
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -31,12 +33,12 @@ public class RefundController {
 	
 	
 	@GetMapping("/{userNo}")
-	public ResponseEntity<List<RefundDto>> getAllRefunds(@PathVariable("userNo") long userNo) throws Exception{
+	public ResponseEntity<List<RefundDto>> getAllRefunds(@PathVariable("userNo") @NotNull long userNo) throws Exception{
 		return new ResponseEntity<List<RefundDto>>(refundService.getAllRefunds(userNo), HttpStatus.OK);
 	}
 	
 	@PostMapping("/{payNo}")
-	public ResponseEntity<String> registerRefund(@PathVariable("payNo") long payNo) throws Exception{
+	public ResponseEntity<String> registerRefund(@PathVariable("payNo") @NotNull long payNo) throws Exception{
 		if(refundService.registerRefund(payNo)) {			
 			return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
 		}

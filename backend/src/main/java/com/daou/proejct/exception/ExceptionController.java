@@ -15,7 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RestControllerAdvice(basePackages = "com.daou.project.controller")
+@RestControllerAdvice
 public class ExceptionController extends ResponseEntityExceptionHandler{
 
 	private static final String WRONG = "wrong";
@@ -23,13 +23,26 @@ public class ExceptionController extends ResponseEntityExceptionHandler{
 	
 	@ExceptionHandler(value = MethodArgumentNotValidException.class)
 	public ResponseEntity<String> paymentValidationExceptions(MethodArgumentNotValidException ex){
-	    logger.info("paymentValidationExceptions class 출력"); 
+		return new ResponseEntity<String>(WRONG, HttpStatus.FAILED_DEPENDENCY);
+	}
+	
+	@ExceptionHandler({SQLException.class})
+	public ResponseEntity<String> invalidSqlExceptions(SQLException e){
 		return new ResponseEntity<String>(WRONG, HttpStatus.BAD_REQUEST);
 	}
 	
-	@ExceptionHandler(value = SQLException.class)
-	public ResponseEntity<String> invalidSqlExceptions(SQLException e){
-	    logger.info("invalidSqlExceptions class 출력"); 
+	@ExceptionHandler({SavemoneyException.class})
+	public ResponseEntity<String> SavemoneyValidationExceptions(){
+		return new ResponseEntity<String>(WRONG, HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler({PointException.class})
+	public ResponseEntity<String> PointValidationExceptions(){
+		return new ResponseEntity<String>(WRONG, HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler({CouponException.class})
+	public ResponseEntity<String> CouponValidationExceptions(){
 		return new ResponseEntity<String>(WRONG, HttpStatus.BAD_REQUEST);
 	}
 }
