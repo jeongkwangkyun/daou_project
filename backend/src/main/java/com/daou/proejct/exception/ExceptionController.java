@@ -7,42 +7,38 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestControllerAdvice
-public class ExceptionController extends ResponseEntityExceptionHandler{
+public class ExceptionController{
 
-	private static final String WRONG = "wrong";
 	private static final Logger logger = LoggerFactory.getLogger(ExceptionController.class);
 	
-	@ExceptionHandler(value = MethodArgumentNotValidException.class)
-	public ResponseEntity<String> paymentValidationExceptions(MethodArgumentNotValidException ex){
-		return new ResponseEntity<String>(WRONG, HttpStatus.FAILED_DEPENDENCY);
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<String> paymentValidationExceptions(MethodArgumentNotValidException exception){
+		return new ResponseEntity<String>(exception.getMessage(), HttpStatus.FAILED_DEPENDENCY);
 	}
 	
-	@ExceptionHandler({SQLException.class})
-	public ResponseEntity<String> invalidSqlExceptions(SQLException e){
-		return new ResponseEntity<String>(WRONG, HttpStatus.BAD_REQUEST);
+	@ExceptionHandler(SQLException.class)
+	public ResponseEntity<String> sqlValidException(SQLException exception){
+		return new ResponseEntity<String>(exception.getMessage(), HttpStatus.FAILED_DEPENDENCY);
+	}
+
+	@ExceptionHandler(SavemoneyException.class)
+	public ResponseEntity<String> SavemoneyValidationExceptions(SavemoneyException exception){
+		return new ResponseEntity<String>(exception.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 	
-	@ExceptionHandler({SavemoneyException.class})
-	public ResponseEntity<String> SavemoneyValidationExceptions(){
-		return new ResponseEntity<String>(WRONG, HttpStatus.BAD_REQUEST);
+	@ExceptionHandler(PointException.class)
+	public ResponseEntity<String> PointValidationExceptions(PointException exception){
+		return new ResponseEntity<String>(exception.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 	
-	@ExceptionHandler({PointException.class})
-	public ResponseEntity<String> PointValidationExceptions(){
-		return new ResponseEntity<String>(WRONG, HttpStatus.BAD_REQUEST);
-	}
-	
-	@ExceptionHandler({CouponException.class})
-	public ResponseEntity<String> CouponValidationExceptions(){
-		return new ResponseEntity<String>(WRONG, HttpStatus.BAD_REQUEST);
+	@ExceptionHandler(CouponException.class)
+	public ResponseEntity<String> CouponValidationExceptions(CouponException exception){
+		return new ResponseEntity<String>(exception.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 }

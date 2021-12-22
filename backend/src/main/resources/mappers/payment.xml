@@ -36,9 +36,9 @@
         ORDER BY expiration_date
 	</select>
 	
-	<insert id="registerTempTable" parameterType="paymentDto">
+	<insert id="insertPayment" parameterType="paymentDto">
 		INSERT INTO payment  (pay_no,save_money_no,user_no,coupon_no, total_price, user_money,pay_date,refund_yn, use_savemoney)
-	 	VALUES (0,1,1,1,0,0,"1111-11-11",'n',0);
+	 	VALUES (0,1,1,1,0,0,"0000-00-01",'n',0);
 	<selectKey keyProperty="payNo" resultType="int" order="AFTER">
 		SELECT MAX(pay_no)
 		FROM payment
@@ -74,7 +74,7 @@
 		WHERE pay_no = #{payNo}
 	</update>
 	
-	<insert id="insertPayProducTable" parameterType="payProductDto">
+	<insert id="insertPayProductTable" parameterType="payProductDto">
 		INSERT INTO product_payment(product_no, pay_no, product_cnt)
 		VALUES (#{productNo}, #{payNo}, #{productCnt})
 	</insert>

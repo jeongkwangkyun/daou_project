@@ -1,5 +1,7 @@
 <template>
   <div>
+    <h2>직접 결제방식</h2>
+
     <user-data></user-data>
     <v-simple-table>
       <thead>

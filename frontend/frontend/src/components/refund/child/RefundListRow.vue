@@ -4,7 +4,7 @@
     <td>{{ productName }}</td>
     <td>{{ productCnt }}</td>
     <td>{{ totalPrice }}</td>
-    <td>{{ couponType }}</td>
+    <td>{{ couponType }}%</td>
     <td>{{ usePoint }}</td>
     <td>{{ useSavemoney }}</td>
     <td>{{ userMoney }}</td>

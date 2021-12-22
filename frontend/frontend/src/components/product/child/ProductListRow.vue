@@ -1,5 +1,5 @@
 <template>
-  <tr class="colsize">
+  <tr>
     <td>{{ productNo }}</td>
     <td>
       <router-link

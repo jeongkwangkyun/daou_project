@@ -26,7 +26,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/payment")
 public class PaymentController {
-	private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
 	private static final String SUCCESS = "success";
 	private static final String FAIL = "fail";
 	
@@ -38,7 +37,7 @@ public class PaymentController {
 	}
 	
 	@PostMapping("/direct")
-	public ResponseEntity<String> registerPayment(@Valid @RequestBody RequestPaymentDto reqPaymentDto) throws Exception{
+	public ResponseEntity<String> registerPayment(@RequestBody @Valid RequestPaymentDto reqPaymentDto) throws Exception{
 		if(paymentService.registerPayment(reqPaymentDto)) {
 			return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
 		}

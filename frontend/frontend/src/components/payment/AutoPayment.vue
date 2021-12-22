@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h2>자동 결제방식</h2>
     <user-data></user-data>
     <v-simple-table>
       <thead>
@@ -15,7 +16,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="colsize">
+        <tr>
           <td>{{ payment_list[0].productNo }}</td>
           <td>{{ payment_list[0].productName }}</td>
           <td>{{ payment_list[0].productCnt }}</td>

@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.daou.proejct.exception.CouponException;
 import com.daou.proejct.exception.PointException;
 import com.daou.proejct.exception.SavemoneyException;
-import com.daou.project.Enum.CouponEnum;
+import com.daou.project.Enum.Coupon;
 import com.daou.project.model.CouponDto;
 import com.daou.project.model.PayPointDto;
 import com.daou.project.model.PayProductDto;
@@ -26,79 +26,77 @@ import com.daou.project.model.mapper.PaymentMapper;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
 	private final PaymentMapper paymentMapper;
 
-	@Override
 	public UserDataDto listUserData(long userNo) throws Exception {
 		UserDataDto userDataDto = new UserDataDto(getPoint(userNo), getCoupon(userNo), getSaveMoney(userNo));
 		return userDataDto;
 	}
 
-	@Override
 	public List<PointDto> getPoint(long userNo) throws Exception{
 		return paymentMapper.getPoint(userNo);
 	}
 
-	@Override
 	public List<CouponDto> getCoupon(long userNo) throws Exception {
 		return paymentMapper.getCoupon(userNo);
 	}
 
-	@Override
 	public List<CouponDto> getCouponNoDuplicated(long userNo) throws Exception {
 		return paymentMapper.getCouponNoDuplicated(userNo);
 	}
-	@Override
+
 	public SaveMoneyDto getSaveMoney(long userNo) throws Exception {
 		return  paymentMapper.getSaveMoney(userNo);
 	}
 
-	@Override
 	@Transactional
 	public boolean registerPayment(RequestPaymentDto reqPaymentDto) throws Exception {
 		
-		UserDataDto userDataDto = new UserDataDto(getPoint(reqPaymentDto.getUserNo()), getCouponNoDuplicated(reqPaymentDto.getUserNo()), getSaveMoney(reqPaymentDto.getUserNo()));
+		UserDataDto userDataDto = new UserDataDto(getPoint(reqPaymentDto.getUserNo()),
+												  getCouponNoDuplicated(reqPaymentDto.getUserNo()),
+												  getSaveMoney(reqPaymentDto.getUserNo()));
 		
 		PaymentDto paymentDto = new PaymentDto();
 		paymentDto.setUserNo(reqPaymentDto.getUserNo());
 
 		//1. 임시 Payment 테이블 등록하기 
-		registerTempTable(paymentDto);
+		insertPayment(paymentDto);
 
 		//2. Coupon 테이블 최신화
-		paymentDto = registerCouponTable(userDataDto.getCouponList(),reqPaymentDto, paymentDto);
+		updateCouponTable(userDataDto.getCouponList(),reqPaymentDto, paymentDto);
 
 		//3. Point 테이블, Payment_Point 최신화
-		registerPointTable(userDataDto.getPointList(), reqPaymentDto, paymentDto);
+		updatePointTable(userDataDto.getPointList(), reqPaymentDto, paymentDto);
 
 		//4. savemoney 테이블 최신화
-		paymentDto = registerSavemoneyTable(userDataDto.getSavemoneyList(), reqPaymentDto, paymentDto);
+		updateSavemoneyTable(userDataDto.getSavemoneyList(), reqPaymentDto, paymentDto);
 
 		//5. 테이블 최신화
 		updatePaymentTable(paymentDto,reqPaymentDto);
 
 		//6. product_payment 테이블 등록
-		insertPayProducTable(new PayProductDto(reqPaymentDto.getProductNo(),paymentDto.getPayNo(),reqPaymentDto.getProductCnt()));
+		insertPayProductTable(new PayProductDto(reqPaymentDto.getProductNo(),paymentDto.getPayNo(),reqPaymentDto.getProductCnt()));
 		
 		return true;
 	}
 
-
-	private void insertPayProducTable(PayProductDto payProductDto) throws SQLException {
-		paymentMapper.insertPayProducTable(payProductDto);
+	@Transactional
+	private void insertPayProductTable(PayProductDto payProductDto) throws SQLException {
+		paymentMapper.insertPayProductTable(payProductDto);
 	}
 
-
+	@Transactional
 	private void updatePaymentTable(PaymentDto paymentDto, RequestPaymentDto reqPaymentDto) throws SQLException {
 		paymentDto.setPayment(reqPaymentDto.getTotalPrice(), reqPaymentDto.getUserMoney(), 'n');
 		paymentMapper.updatePaymentTable(paymentDto);
 	}
 
-
-	private PaymentDto registerSavemoneyTable(SaveMoneyDto savemoneyList, RequestPaymentDto reqPaymentDto,
+	@Transactional
+	private void updateSavemoneyTable(SaveMoneyDto savemoneyList, RequestPaymentDto reqPaymentDto,
 			PaymentDto paymentDto) throws SQLException {
 		long savemoneyNo = 1;
 		if(reqPaymentDto.getPaySaveMoney() > savemoneyList.getSaveMoney()) {
@@ -114,21 +112,24 @@ public class PaymentServiceImpl implements PaymentService {
 		}
 		paymentDto.setSavemoneyNo(savemoneyNo);
 
-		return paymentDto;
 	}
 
-
-	private void registerPointTable(List<PointDto> pointList, RequestPaymentDto reqPaymentDto,
+	@Transactional
+	private void updatePointTable(List<PointDto> pointList, RequestPaymentDto reqPaymentDto,
 			PaymentDto paymentDto) throws SQLException {
-		int remainPoint = reqPaymentDto.getPayPoint();
-		
-		if(remainPoint > 0) {
+		int requestPoint = reqPaymentDto.getPayPoint();
+		if(requestPoint > 0) {
+			int userAllPoint = pointList.stream().mapToInt(PointDto::getBalancePoint).sum();
+			
+			if(requestPoint > userAllPoint) {
+				throw new PointException();
+			}
+			
 			int listSize = pointList.size();
-			for(int i = 0 ; i < listSize; i++) {
+			for(int i = 0 ; i < listSize ; i++) {
 				PointDto updatePoint = pointList.get(i);
-				int usePoint = 0;
 
-				usePoint = updatePoint.getBalancePoint();
+				int usablePoint = updatePoint.getBalancePoint();
 
 				PayPointDto registPoint = PayPointDto.builder()
 						.pointNo(updatePoint.getPointNo())
@@ -136,30 +137,31 @@ public class PaymentServiceImpl implements PaymentService {
 						.userNo(paymentDto.getUserNo())
 						.build();
 
-				if(remainPoint>updatePoint.getBalancePoint()) {	
+				if(requestPoint > usablePoint) {	
 					updatePoint.setBalancePoint(0);
-					registPoint.setUsePoint(usePoint);
-					paymentMapper.updatePointTable(updatePoint);
-					paymentMapper.insertPayPointTable(registPoint);
-					remainPoint -= usePoint;
+					registPoint.setUsePoint(usablePoint);
+					change_state(updatePoint,registPoint);
+					requestPoint -= usablePoint;
 				}
 				else {
-					updatePoint.setBalancePoint(usePoint - remainPoint);
-					paymentMapper.updatePointTable(updatePoint);
-					registPoint.setUsePoint(remainPoint);
-					paymentMapper.insertPayPointTable(registPoint);
-					remainPoint = 0;
+					updatePoint.setBalancePoint(usablePoint - requestPoint);
+					registPoint.setUsePoint(requestPoint);
+					change_state(updatePoint,registPoint);
+					requestPoint = 0;
 					break;
 				}
 			}
-			if(remainPoint > 0) {
-				throw new PointException();
-			}
 		}
-		
 	}
 
-	private PaymentDto registerCouponTable(List<CouponDto> couponList, RequestPaymentDto reqPaymentDto,PaymentDto paymentDto) throws SQLException {
+	@Transactional
+	private void change_state(PointDto updatePoint, PayPointDto registPoint) throws SQLException {
+		paymentMapper.updatePointTable(updatePoint);
+		paymentMapper.insertPayPointTable(registPoint);
+	}
+
+	@Transactional
+	private void updateCouponTable(List<CouponDto> couponList, RequestPaymentDto reqPaymentDto,PaymentDto paymentDto) throws SQLException {
 		long couponNo = 1;
 		if(reqPaymentDto.getPayCoupon() != 0) {
 			int listSize = couponList.size();
@@ -172,26 +174,28 @@ public class PaymentServiceImpl implements PaymentService {
 			}
 		}
 		paymentDto.setCouponNo(couponNo);
-		return paymentDto;
+	}
+	
+	@Transactional
+	public int insertPayment(PaymentDto paymentDto) throws Exception{
+		return paymentMapper.insertPayment(paymentDto);
 	}
 
 
-	public int registerTempTable(PaymentDto paymentDto) throws Exception{
-		return paymentMapper.registerTempTable(paymentDto);
-	}
-
-
-	@Override
 	public RequestPaymentDto getAutoPayment(RequestPaymentDto orderDto) throws Exception {
 		orderDto.setUserMoney(orderDto.getTotalPrice());
+		
 		applyCoupon(orderDto);
+		
 		applyPoint(orderDto);
+		
 		if(orderDto.getUserMoney() != 0 ) {
 			orderDto = applySavemoney(orderDto);
 		}
 		return orderDto;
 	}
-
+	
+	
 	private RequestPaymentDto applySavemoney(RequestPaymentDto orderDto) throws Exception {
 		int savemoney = getSaveMoney(orderDto.getUserNo()).getSaveMoney();
 
@@ -209,7 +213,6 @@ public class PaymentServiceImpl implements PaymentService {
 		return orderDto;
 	}
 
-
 	private void applyPoint(RequestPaymentDto orderDto) throws SQLException {
 		int point = userEnablePoint(orderDto.getUserNo());
 
@@ -225,44 +228,40 @@ public class PaymentServiceImpl implements PaymentService {
 		}
 	}
 
-
 	private void applyCoupon(RequestPaymentDto orderDto) throws Exception {
 		int userMoney = orderDto.getUserMoney();
 
-		if(orderDto.getTotalPrice() >= CouponEnum.COUPON5.getPrice()) {			
+		if(orderDto.getTotalPrice() >= Coupon.PERCENT5.getPrice()) {			
 			List<CouponDto> couponList = getCouponNoDuplicated(orderDto.getUserNo());
 			int coupon = 0;
 			int listSize = couponList.size();
-			// 쿠폰 가격별 로직 처리해줘야함
+			
 			if(listSize !=0) {
-				if(orderDto.getTotalPrice() >= CouponEnum.COUPON20.getPrice()) {
+				if(orderDto.getTotalPrice() >= Coupon.PERCENT20.getPrice()) {
 					coupon = couponList.get(0).getType();
 				}
-				else {					
-					int couponA = 0;
-					int couponB = 0;
-					int couponC = 0;
+				else {				
+					int coupon10 = 0;
+					int coupon5 = 0;
 					for(int i = 0 ; i < listSize ; i++) {
-						if(couponList.get(i).getType() == CouponEnum.COUPON20.getDiscountPercent()) {
-							couponA +=1;
+						
+						if(couponList.get(i).getType() == Coupon.PERCENT10.getDiscountPercent()) {
+							coupon10 += 1;
 						}
-						else if(couponList.get(i).getType() == CouponEnum.COUPON10.getDiscountPercent()) {
-							couponB += 1;
-						}
-						else if(couponList.get(i).getType() == CouponEnum.COUPON5.getDiscountPercent()) {
-							couponC += 1;
+						else if(couponList.get(i).getType() == Coupon.PERCENT5.getDiscountPercent()) {
+							coupon5 += 1;
 						}
 					}
-					if(orderDto.getTotalPrice()>=CouponEnum.COUPON10.getPrice()) {
-						if(couponB != 0 ) {
-							coupon = CouponEnum.COUPON10.getDiscountPercent(); 
+					if(orderDto.getTotalPrice()>=Coupon.PERCENT10.getPrice()) {
+						if(coupon10 != 0 ) {
+							coupon = Coupon.PERCENT10.getDiscountPercent(); 
 						}
-						else if(couponC != 0 ) {
-							coupon = CouponEnum.COUPON5.getDiscountPercent();
+						else if(coupon5 != 0 ) {
+							coupon = Coupon.PERCENT5.getDiscountPercent();
 						}
 					}
-					else if(couponC != 0){
-						coupon = CouponEnum.COUPON5.getDiscountPercent();
+					else if(coupon5 != 0){
+						coupon = Coupon.PERCENT5.getDiscountPercent();
 					}
 				}
 			}
@@ -271,7 +270,6 @@ public class PaymentServiceImpl implements PaymentService {
 			orderDto.setUserMoney(userMoney);
 		}
 	}
-
 
 	private int userEnablePoint(long userNo) throws SQLException {
 		return paymentMapper.userEnablePoint(userNo); 

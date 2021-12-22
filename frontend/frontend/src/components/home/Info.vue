@@ -6,7 +6,7 @@
         style="text-shadow: 2px 2px 2px gray"
       ></div>
     </h2>
-    <div class="info-message">원하시는 제품을 최저가로 가져가세요</div>
+    <div class="info-message">원하시는 상품을 최저가로 가져가세요</div>
   </div>
 </template>
 
