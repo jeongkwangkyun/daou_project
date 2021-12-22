@@ -1,5 +1,7 @@
 <template>
   <div>
+    <h2>직접 결제방식</h2>
+
     <user-data></user-data>
     <v-simple-table>
       <thead>
@@ -116,7 +118,7 @@ export default {
         {
           userNo: this.userNo,
           productNo: this.payment_list[0].productNo,
-          productCnt: this.payment_list[0].productCnt,
+          productCnt: this.payment_list[0].productCnt * 1,
           totalPrice: this.payment_list[0].totalPrice,
           payCoupon: this.couponType,
           payPoint: this.point,
@@ -124,15 +126,24 @@ export default {
           userMoney: this.price,
         },
         ({ data }) => {
-          let msg = "등록 처리시 문제가 발생했습니다.";
+          let msg = "결제 처리시 문제가 발생했습니다.";
           if (data == "success") {
-            msg = "등록이 완료되었습니다.";
+            msg = "결제가 완료되었습니다.";
           }
           alert(msg);
           this.movePage();
         },
         (error) => {
+          let msg = "결제 처리시 문제가 발생했습니다.";
+          alert(msg);
           console.log(error);
+        },
+        (wrong) => {
+          let msg = "결제 수단이 문제가 발생했습니다.";
+          console.log(wrong);
+          if (wrong == "wrong") {
+            alert(msg);
+          }
         }
       );
     },

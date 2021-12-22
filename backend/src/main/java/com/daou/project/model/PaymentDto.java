@@ -13,6 +13,10 @@ public class PaymentDto {
 	private int useSavemoney;
 	private long userNo;
 	private long couponNo;
+	private int totalPrice;
+	private int userMoney;
+	private String payDate;
+	private char refundYn;
 	public PaymentDto() {};
 
 	public PaymentDto(long payNo, long savemoneyNo, long userNo, long couponNo, int totalPrice, int userMoney,
@@ -27,5 +31,12 @@ public class PaymentDto {
 		this.payDate = payDate;
 		this.refundYn = refundYn;
 	}
+
+	public void setPayment(int totalPrice, int userMoney, char refundYn) {
+		this.totalPrice = totalPrice;
+		this.userMoney = userMoney;
+		this.refundYn = refundYn;
+	}
+
 	
 }

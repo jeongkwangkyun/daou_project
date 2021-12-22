@@ -4,7 +4,7 @@
 
 <mapper namespace="com.daou.project.model.mapper.RefundMapper">
 	<select id="getAllRefunds" parameterType="long" resultType="refundDto">
-		SELECT P.pay_no, Prd.product_name, PrdP.product_cnt, P.total_price, C.type , sum(PayP.use_point) use_point, P.use_savemoney, P.user_money, P.pay_date, P.refund_yn
+		SELECT P.pay_no, Prd.product_name, PrdP.product_cnt, P.total_price, C.type as couponType , sum(PayP.use_point) use_point, P.use_savemoney, P.user_money, P.pay_date, P.refund_yn
 		FROM coupon C, product_payment PrdP, product Prd,
 		payment P LEFT OUTER JOIN payment_point PayP 
 		ON P.pay_no = PayP.pay_no
@@ -14,6 +14,8 @@
 		AND P.pay_no = PrdP.pay_no
 		AND PrdP.product_no = Prd.product_no
 		GROUP BY P.pay_no
+		ORDER BY P.pay_no DESC
+
 	</select>
 	
 	<select id="getPaymentData" parameterType="long" resultType="paymentDto">
@@ -40,11 +42,11 @@
 		where pay_no = #{payNo}
 	</select>
 	
-	<update id="updatePointTable" parameterType="payPointDto">
-		UPDATE point
-		SET balance_point = balance_point + #{usePoint}
-		WHERE point_no = #{pointNo}
-		AND expiration_yn = 'n'
+	<update id="updatePointTable" parameterType="long">
+		UPDATE point, (SELECT point_no, use_point FROM payment_point WHERE pay_no = #{payNo}) as PayPoint
+		SET point.balance_point = point.balance_point + PayPoint.use_point
+		WHERE point.point_no = PayPoint.point_no
+		AND point.expiration_yn = 'n'
 	</update>
 	
 	<update id="updatePaymentTable" parameterType="long">

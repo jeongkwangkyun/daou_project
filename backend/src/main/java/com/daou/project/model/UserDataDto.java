@@ -3,7 +3,6 @@ package com.daou.project.model;
 import java.util.List;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class UserDataDto {

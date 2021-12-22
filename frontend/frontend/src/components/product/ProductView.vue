@@ -28,7 +28,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="colsize">
+          <tr>
             <td>{{ product.productNo }}</td>
             <td>{{ product.productName }}</td>
             <td>{{ product.productPrice }}</td>

@@ -2,6 +2,8 @@ package com.daou.project.controller;
 
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -23,16 +25,16 @@ public class ProductController {
 	private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 	private static final String SUCCESS = "success";
 	private static final String FAIL = "fail";
-	
+
 	private final ProductService productService;
-	
+
 	@GetMapping
 	public ResponseEntity<List<ProductDto>> getAllProducts() throws Exception{
 		return new ResponseEntity<List<ProductDto>>(productService.getAllProducts(), HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/{productNo}")
-	public ResponseEntity<ProductDto> getProduct(@PathVariable("productNo") long productNo) throws Exception{
+	public ResponseEntity<ProductDto> getProduct(@PathVariable("productNo")  @NotNull long productNo) throws Exception{
 		return new ResponseEntity<ProductDto>(productService.getProduct(productNo), HttpStatus.OK);
 	}
 }

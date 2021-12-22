@@ -18,7 +18,7 @@ public class ScheduleServiceImpl implements ScheduleService{
 	private final ScheduleMapper scheduleMapper;
 	
 	private static final Logger logger = LoggerFactory.getLogger(ScheduleServiceImpl.class);
-	@Scheduled(cron="1 0 00 * * ?")
+	@Scheduled(cron="0 0 0 * * *")
     public void updateExpiration() throws SQLException {
         logger.info("DB Refund 테이블 expiration_yn 업데이트");
         scheduleMapper.updateExpiration();

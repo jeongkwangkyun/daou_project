@@ -15,13 +15,14 @@ import com.daou.project.model.mapper.RefundMapper;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class RefundServiceImpl implements RefundService {
 	
 	private final RefundMapper refundMapper;
 	
 	public List<RefundDto> getAllRefunds(long userNo) throws Exception {
-		
+		 List<RefundDto> list =refundMapper.getAllRefunds(userNo);
 		return refundMapper.getAllRefunds(userNo);
 	}
 
@@ -51,27 +52,28 @@ public class RefundServiceImpl implements RefundService {
 		insertRefundTable(refundDto);
 		return true;
 	}
-
+	
+	@Transactional
 	private void insertRefundTable(RefundDoneDto refundDto) throws SQLException {
 		refundMapper.insertRefundTable(refundDto);
 	}
-
+	
+	@Transactional
 	private void updatePaymentTable(long payNo) throws SQLException {
 		refundMapper.updatePaymentTable(payNo);
 	}
 
+	@Transactional
 	private void updatePointTable(long payNo) throws SQLException {
-		List<PayPointDto> pointList = refundMapper.getPoint(payNo);
-		int listSize = pointList.size();
-		for(int i = 0 ; i < listSize ; i ++) {
-			refundMapper.updatePointTable(pointList.get(i));
-		}
+		refundMapper.updatePointTable(payNo);
 	}
 
+	@Transactional
 	private void updateCouponTable(long couponNo) throws SQLException {
 		refundMapper.updateCouponTable(couponNo);
 	}
 
+	@Transactional
 	private void updateSavemoneyTable(PaymentDto paymentDto) throws SQLException {
 		refundMapper.updateSavemoneyTable(paymentDto);
 	}

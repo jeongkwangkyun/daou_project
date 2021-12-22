@@ -3,11 +3,11 @@
     <v-app-bar color="deep-purple" dark>
       <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
 
-      <v-toolbar-title>Daou몰 </v-toolbar-title>
+      <v-toolbar-title>다우농장</v-toolbar-title>
       <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn right color="deep-purple" v-if="userInfo" @click="moveMypage()"
+        <!-- <v-btn right color="deep-purple" v-if="userInfo" @click="moveMypage()"
           >{{ userInfo.userid }}님 안녕하세요</v-btn
-        >
+        > -->
       </v-toolbar-items>
     </v-app-bar>
 

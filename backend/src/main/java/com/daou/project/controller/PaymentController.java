@@ -1,5 +1,9 @@
 package com.daou.project.controller;
 
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -9,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.daou.project.model.PaymentDto;
@@ -23,19 +26,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/payment")
 public class PaymentController {
-	private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
 	private static final String SUCCESS = "success";
 	private static final String FAIL = "fail";
 	
 	private final PaymentService paymentService;
 	
 	@GetMapping("/{userNo}")
-	public ResponseEntity<UserDataDto> listUserData(@PathVariable("userNo") long userNo) throws Exception{
+	public ResponseEntity<UserDataDto> listUserData(@PathVariable("userNo") @NotNull long userNo) throws Exception{
 		return new ResponseEntity<UserDataDto>(paymentService.listUserData(userNo),HttpStatus.OK);
 	}
 	
 	@PostMapping("/direct")
-	public ResponseEntity<String> registerPayment(@RequestBody RequestPaymentDto reqPaymentDto) throws Exception{
+	public ResponseEntity<String> registerPayment(@RequestBody @Valid RequestPaymentDto reqPaymentDto) throws Exception{
 		if(paymentService.registerPayment(reqPaymentDto)) {
 			return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
 		}

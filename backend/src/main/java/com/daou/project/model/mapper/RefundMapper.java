@@ -18,7 +18,7 @@ public interface RefundMapper {
 	void updateSavemoneyTable(PaymentDto paymentDto) throws SQLException;
 	void updateCouponTable(long couponNo) throws SQLException;
 	List<PayPointDto> getPoint(long payNo) throws SQLException;
-	void updatePointTable(PayPointDto payPointDto) throws SQLException;
+	void updatePointTable(long payNo) throws SQLException;
 	void updatePaymentTable(long payNo) throws SQLException;
 	void insertRefundTable(RefundDoneDto refundDto) throws SQLException;
 }
