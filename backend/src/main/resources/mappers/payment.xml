@@ -21,24 +21,43 @@
         ORDER BY type desc
 	</select>
 	
+	<select id="getAutoCoupon" parameterType="requestPaymentDto" resultType="couponDto">
+		SELECT coupon_no, user_no, type, coupon_yn
+		FROM coupon
+		WHERE user_no = #{userNo}
+		AND coupon_yn = 'n'
+		<choose>
+			<when test="userMoney gte 30000">
+				AND type <![CDATA[ <= ]]> 20
+			</when>
+			<when test="userMoney gte 20000">
+				AND type <![CDATA[ <= ]]> 10
+			</when>
+			<when test="userMoney gte 10000">
+				AND type <![CDATA[ <= ]]> 5
+			</when>
+		</choose>
+        ORDER BY type desc
+	</select>
+	
 	<select id="getSaveMoney" parameterType="long" resultType="saveMoneyDto">
 		SELECT save_money_no, user_no, save_money
 		FROM save_money
-		WHERE user_no = (#{user_no})
+		WHERE user_no = #{user_no}
 	</select>
 	
 	<select id="getPoint" parameterType="long" resultType="pointDto">
 		SELECT point_no, user_no, save_point, balance_point, expiration_date, expiration_yn
 		FROM point
 		WHERE user_no = #{user_no}
-		AND expiration_yn ='n'
+		AND timestampdiff(SECOND, now(), expiration_date) > 0
 		AND balance_point > 0
         ORDER BY expiration_date
 	</select>
 	
 	<insert id="insertPayment" parameterType="paymentDto">
-		INSERT INTO payment  (pay_no,save_money_no,user_no,coupon_no, total_price, user_money,pay_date,refund_yn, use_savemoney)
-	 	VALUES (0,1,1,1,0,0,"0000-00-01",'n',0);
+		INSERT INTO payment  (pay_no, save_money_no, use_savemoney, user_no, coupon_no, total_price, user_money, pay_date,refund_yn)
+	 	VALUES (0,#{savemoneyNo}, #{useSavemoney}, #{userNo}, #{couponNo}, #{totalPrice},#{userMoney}, now(), 'n');
 	<selectKey keyProperty="payNo" resultType="int" order="AFTER">
 		SELECT MAX(pay_no)
 		FROM payment
@@ -83,7 +102,7 @@
 		SELECT IFNULL(sum(balance_point),0)
 		FROM point
 		WHERE user_no = #{userNo}
-		AND expiration_yn ='n'
+		AND timestampdiff(SECOND, now(), point.expiration_date) > 0
 		AND balance_point > 0
 	</select>
 </mapper>

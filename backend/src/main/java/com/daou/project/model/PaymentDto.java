@@ -9,10 +9,10 @@ public class PaymentDto {
 	// Payment 테이블에 담을 데이터
 
 	private long payNo;
-	private long savemoneyNo;
+	private long savemoneyNo = 1;
 	private int useSavemoney;
-	private long userNo;
-	private long couponNo;
+	private long userNo = 1;
+	private long couponNo = 1;
 	private int totalPrice;
 	private int userMoney;
 	private String payDate;

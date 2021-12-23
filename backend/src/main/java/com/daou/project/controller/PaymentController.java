@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.daou.project.Enum.Respond;
 import com.daou.project.model.PaymentDto;
 import com.daou.project.model.RequestPaymentDto;
 import com.daou.project.model.UserDataDto;
@@ -26,8 +27,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/payment")
 public class PaymentController {
-	private static final String SUCCESS = "success";
-	private static final String FAIL = "fail";
 	
 	private final PaymentService paymentService;
 	
@@ -39,9 +38,9 @@ public class PaymentController {
 	@PostMapping("/direct")
 	public ResponseEntity<String> registerPayment(@RequestBody @Valid RequestPaymentDto reqPaymentDto) throws Exception{
 		if(paymentService.registerPayment(reqPaymentDto)) {
-			return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
+			return new ResponseEntity<String>(Respond.SUCCESS.getType(), HttpStatus.OK);
 		}
-		return new ResponseEntity<String>(FAIL, HttpStatus.NO_CONTENT);
+		return new ResponseEntity<String>(Respond.FAIL.getType(), HttpStatus.NO_CONTENT);
 	}
 	
 	@PostMapping("/auto")

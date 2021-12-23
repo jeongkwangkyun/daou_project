@@ -10,6 +10,7 @@ import com.daou.project.model.PayPointDto;
 import com.daou.project.model.PayProductDto;
 import com.daou.project.model.PaymentDto;
 import com.daou.project.model.PointDto;
+import com.daou.project.model.RequestPaymentDto;
 import com.daou.project.model.SaveMoneyDto;
 
 @Mapper
@@ -27,4 +28,5 @@ public interface PaymentMapper {
 	public void updatePaymentTable(PaymentDto paymentDto) throws SQLException;
 	public void insertPayProductTable(PayProductDto payProductDto) throws SQLException;
 	public int userEnablePoint(long userNo) throws SQLException;
+	public List<CouponDto> getAutoCoupon(RequestPaymentDto orderDto);
 }

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.daou.proejct.exception.CouponException;
 import com.daou.proejct.exception.PointException;
 import com.daou.proejct.exception.SavemoneyException;
+import com.daou.proejct.exception.UsermoneyException;
 import com.daou.project.Enum.Coupon;
 import com.daou.project.model.CouponDto;
 import com.daou.project.model.PayPointDto;
@@ -55,44 +56,107 @@ public class PaymentServiceImpl implements PaymentService {
 
 	@Transactional
 	public boolean registerPayment(RequestPaymentDto reqPaymentDto) throws Exception {
-		
 		UserDataDto userDataDto = new UserDataDto(getPoint(reqPaymentDto.getUserNo()),
-												  getCouponNoDuplicated(reqPaymentDto.getUserNo()),
-												  getSaveMoney(reqPaymentDto.getUserNo()));
+				getCouponNoDuplicated(reqPaymentDto.getUserNo()),
+				getSaveMoney(reqPaymentDto.getUserNo()));
 		
+		LinkedList<PayPointDto> payPoint = new LinkedList<PayPointDto>();
 		PaymentDto paymentDto = new PaymentDto();
 		paymentDto.setUserNo(reqPaymentDto.getUserNo());
+		
+		//1. 쿠폰 테이블 update
+		updateCouponTable(userDataDto.getCouponList(), reqPaymentDto, paymentDto);
 
-		//1. 임시 Payment 테이블 등록하기 
-		insertPayment(paymentDto);
+		//2. 포인 테이블 update
+		updatePointTable(userDataDto.getPointList(), reqPaymentDto, paymentDto, payPoint);
 
-		//2. Coupon 테이블 최신화
-		updateCouponTable(userDataDto.getCouponList(),reqPaymentDto, paymentDto);
-
-		//3. Point 테이블, Payment_Point 최신화
-		updatePointTable(userDataDto.getPointList(), reqPaymentDto, paymentDto);
-
-		//4. savemoney 테이블 최신화
+		//3. 적립금 테이블 update
 		updateSavemoneyTable(userDataDto.getSavemoneyList(), reqPaymentDto, paymentDto);
 
-		//5. 테이블 최신화
-		updatePaymentTable(paymentDto,reqPaymentDto);
+		//4. 결제 테이블 insert 
+		insertPayment(paymentDto, reqPaymentDto);
 
-		//6. product_payment 테이블 등록
-		insertPayProductTable(new PayProductDto(reqPaymentDto.getProductNo(),paymentDto.getPayNo(),reqPaymentDto.getProductCnt()));
+		//5. 결제 포인트 매핑 테이블 insert
+		insertPaypoint(payPoint, paymentDto.getPayNo());
 		
+		//6. 결제 상품 매핑 테이블 insert
+		insertPayProductTable(paymentDto, reqPaymentDto);
+
 		return true;
 	}
 
-	@Transactional
-	private void insertPayProductTable(PayProductDto payProductDto) throws SQLException {
-		paymentMapper.insertPayProductTable(payProductDto);
+	private void insertPaypoint(LinkedList<PayPointDto> payPoint, long payNo) throws SQLException {
+		for(int i = 0 ;  i < payPoint.size() ; i++) {
+			payPoint.get(i).setPayNo(payNo);
+			paymentMapper.insertPayPointTable(payPoint.get(i));
+		}
 	}
 
 	@Transactional
-	private void updatePaymentTable(PaymentDto paymentDto, RequestPaymentDto reqPaymentDto) throws SQLException {
+	public int insertPayment(PaymentDto paymentDto, RequestPaymentDto reqPaymentDto) throws Exception{
 		paymentDto.setPayment(reqPaymentDto.getTotalPrice(), reqPaymentDto.getUserMoney(), 'n');
-		paymentMapper.updatePaymentTable(paymentDto);
+		return paymentMapper.insertPayment(paymentDto);
+	}
+
+	@Transactional
+	private void updateCouponTable(List<CouponDto> couponList, RequestPaymentDto reqPaymentDto,PaymentDto paymentDto) throws SQLException {
+		long couponNo = 1;
+		if(reqPaymentDto.getPayCoupon() == 0) return;
+
+		int listSize = couponList.size();
+		for(int i = 0 ; i<listSize; i++) {
+			if(couponList.get(i).getType()==reqPaymentDto.getPayCoupon()) {
+				couponNo=couponList.get(i).getCouponNo();
+				paymentMapper.updateUsedCoupon(couponNo);
+				break;
+			}
+		}
+
+		paymentDto.setCouponNo(couponNo);
+	}
+
+	@Transactional
+	private void updatePointTable(List<PointDto> pointList, RequestPaymentDto reqPaymentDto,
+			PaymentDto paymentDto, LinkedList<PayPointDto> payPoint) throws SQLException {
+		int requestPoint = reqPaymentDto.getPayPoint();
+
+		if(requestPoint <= 0) return;
+
+		int userAllPoint = pointList.stream().mapToInt(PointDto::getBalancePoint).sum();
+
+		if(requestPoint > userAllPoint) {
+			throw new PointException();
+		}
+
+		int listSize = pointList.size();
+		for(int i = 0 ; i < listSize ; i++) {
+			PointDto updatePoint = pointList.get(i);
+
+			int usablePoint = updatePoint.getBalancePoint();
+
+			PayPointDto registPoint = PayPointDto.builder()
+					.pointNo(updatePoint.getPointNo())
+					.payNo(paymentDto.getPayNo())
+					.userNo(paymentDto.getUserNo())
+					.build();
+
+			if(requestPoint > usablePoint) {	
+				updatePoint.setBalancePoint(0);
+				registPoint.setUsePoint(usablePoint);
+				paymentMapper.updatePointTable(updatePoint);
+				payPoint.push(registPoint);
+				requestPoint -= usablePoint;
+			}
+			else {
+				updatePoint.setBalancePoint(usablePoint - requestPoint);
+				registPoint.setUsePoint(requestPoint);
+				paymentMapper.updatePointTable(updatePoint);
+				payPoint.push(registPoint);
+				requestPoint = 0;
+				break;
+			}
+
+		}
 	}
 
 	@Transactional
@@ -111,91 +175,65 @@ public class PaymentServiceImpl implements PaymentService {
 
 		}
 		paymentDto.setSavemoneyNo(savemoneyNo);
-
 	}
 
 	@Transactional
-	private void updatePointTable(List<PointDto> pointList, RequestPaymentDto reqPaymentDto,
-			PaymentDto paymentDto) throws SQLException {
-		int requestPoint = reqPaymentDto.getPayPoint();
-		if(requestPoint > 0) {
-			int userAllPoint = pointList.stream().mapToInt(PointDto::getBalancePoint).sum();
-			
-			if(requestPoint > userAllPoint) {
-				throw new PointException();
-			}
-			
-			int listSize = pointList.size();
-			for(int i = 0 ; i < listSize ; i++) {
-				PointDto updatePoint = pointList.get(i);
-
-				int usablePoint = updatePoint.getBalancePoint();
-
-				PayPointDto registPoint = PayPointDto.builder()
-						.pointNo(updatePoint.getPointNo())
-						.payNo(paymentDto.getPayNo())
-						.userNo(paymentDto.getUserNo())
-						.build();
-
-				if(requestPoint > usablePoint) {	
-					updatePoint.setBalancePoint(0);
-					registPoint.setUsePoint(usablePoint);
-					change_state(updatePoint,registPoint);
-					requestPoint -= usablePoint;
-				}
-				else {
-					updatePoint.setBalancePoint(usablePoint - requestPoint);
-					registPoint.setUsePoint(requestPoint);
-					change_state(updatePoint,registPoint);
-					requestPoint = 0;
-					break;
-				}
-			}
-		}
+	private void updatePaymentTable(PaymentDto paymentDto, RequestPaymentDto reqPaymentDto) throws SQLException {
+		paymentDto.setPayment(reqPaymentDto.getTotalPrice(), reqPaymentDto.getUserMoney(), 'n');
+		paymentMapper.updatePaymentTable(paymentDto);
 	}
 
 	@Transactional
-	private void change_state(PointDto updatePoint, PayPointDto registPoint) throws SQLException {
-		paymentMapper.updatePointTable(updatePoint);
-		paymentMapper.insertPayPointTable(registPoint);
-	}
-
-	@Transactional
-	private void updateCouponTable(List<CouponDto> couponList, RequestPaymentDto reqPaymentDto,PaymentDto paymentDto) throws SQLException {
-		long couponNo = 1;
-		if(reqPaymentDto.getPayCoupon() != 0) {
-			int listSize = couponList.size();
-			for(int i = 0 ; i<listSize; i++) {
-				if(couponList.get(i).getType()==reqPaymentDto.getPayCoupon()) {
-					couponNo=couponList.get(i).getCouponNo();
-					paymentMapper.updateUsedCoupon(couponNo);
-					break;
-				}
-			}
-		}
-		paymentDto.setCouponNo(couponNo);
-	}
-	
-	@Transactional
-	public int insertPayment(PaymentDto paymentDto) throws Exception{
-		return paymentMapper.insertPayment(paymentDto);
+	private void insertPayProductTable(PaymentDto paymentDto,RequestPaymentDto reqPaymentDto) throws SQLException {
+		PayProductDto payProductDto = PayProductDto.builder()
+				.productNo(reqPaymentDto.getProductNo())
+				.payNo(paymentDto.getPayNo())
+				.productCnt(reqPaymentDto.getProductCnt())
+				.build();
+		
+		paymentMapper.insertPayProductTable(payProductDto);
 	}
 
 
 	public RequestPaymentDto getAutoPayment(RequestPaymentDto orderDto) throws Exception {
 		orderDto.setUserMoney(orderDto.getTotalPrice());
-		
+
 		applyCoupon(orderDto);
-		
+
 		applyPoint(orderDto);
-		
+
 		if(orderDto.getUserMoney() != 0 ) {
 			orderDto = applySavemoney(orderDto);
 		}
+		if(orderDto.getUserMoney()<0) {
+			throw new UsermoneyException();
+		}
 		return orderDto;
 	}
-	
-	
+
+	private void applyCoupon(RequestPaymentDto orderDto) throws Exception {
+		int userMoney = orderDto.getUserMoney();
+		if(orderDto.getTotalPrice() < Coupon.PERCENT5.getPrice()) return;
+
+		List<CouponDto> couponList = getAutoCoupon(orderDto);
+
+		int listSize = couponList.size();
+		if (listSize < 0 ) return;
+
+		int coupon = 0;
+
+		coupon = couponList.get(0).getType();
+
+		orderDto.setPayCoupon(coupon);
+		userMoney = userMoney - userMoney * coupon /100; 
+		orderDto.setUserMoney(userMoney);
+	}
+
+
+	private List<CouponDto> getAutoCoupon(RequestPaymentDto orderDto) {
+		return paymentMapper.getAutoCoupon(orderDto);
+	}
+
 	private RequestPaymentDto applySavemoney(RequestPaymentDto orderDto) throws Exception {
 		int savemoney = getSaveMoney(orderDto.getUserNo()).getSaveMoney();
 
@@ -209,7 +247,6 @@ public class PaymentServiceImpl implements PaymentService {
 			orderDto.setPaySaveMoney(userMoney);
 			orderDto.setUserMoney(0);
 		}
-
 		return orderDto;
 	}
 
@@ -225,49 +262,6 @@ public class PaymentServiceImpl implements PaymentService {
 		else {
 			orderDto.setPayPoint(userMoney);
 			orderDto.setUserMoney(0);
-		}
-	}
-
-	private void applyCoupon(RequestPaymentDto orderDto) throws Exception {
-		int userMoney = orderDto.getUserMoney();
-
-		if(orderDto.getTotalPrice() >= Coupon.PERCENT5.getPrice()) {			
-			List<CouponDto> couponList = getCouponNoDuplicated(orderDto.getUserNo());
-			int coupon = 0;
-			int listSize = couponList.size();
-			
-			if(listSize !=0) {
-				if(orderDto.getTotalPrice() >= Coupon.PERCENT20.getPrice()) {
-					coupon = couponList.get(0).getType();
-				}
-				else {				
-					int coupon10 = 0;
-					int coupon5 = 0;
-					for(int i = 0 ; i < listSize ; i++) {
-						
-						if(couponList.get(i).getType() == Coupon.PERCENT10.getDiscountPercent()) {
-							coupon10 += 1;
-						}
-						else if(couponList.get(i).getType() == Coupon.PERCENT5.getDiscountPercent()) {
-							coupon5 += 1;
-						}
-					}
-					if(orderDto.getTotalPrice()>=Coupon.PERCENT10.getPrice()) {
-						if(coupon10 != 0 ) {
-							coupon = Coupon.PERCENT10.getDiscountPercent(); 
-						}
-						else if(coupon5 != 0 ) {
-							coupon = Coupon.PERCENT5.getDiscountPercent();
-						}
-					}
-					else if(coupon5 != 0){
-						coupon = Coupon.PERCENT5.getDiscountPercent();
-					}
-				}
-			}
-			orderDto.setPayCoupon(coupon);
-			userMoney = userMoney - userMoney * coupon /100; 
-			orderDto.setUserMoney(userMoney);
 		}
 	}
 

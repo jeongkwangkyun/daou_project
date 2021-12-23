@@ -14,8 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestControllerAdvice
 public class ExceptionController{
-
-	private static final Logger logger = LoggerFactory.getLogger(ExceptionController.class);
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<String> paymentValidationExceptions(MethodArgumentNotValidException exception){
@@ -24,7 +22,7 @@ public class ExceptionController{
 	
 	@ExceptionHandler(SQLException.class)
 	public ResponseEntity<String> sqlValidException(SQLException exception){
-		return new ResponseEntity<String>(exception.getMessage(), HttpStatus.FAILED_DEPENDENCY);
+		return new ResponseEntity<String>(exception.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(SavemoneyException.class)
@@ -39,6 +37,11 @@ public class ExceptionController{
 	
 	@ExceptionHandler(CouponException.class)
 	public ResponseEntity<String> CouponValidationExceptions(CouponException exception){
+		return new ResponseEntity<String>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(UsermoneyException.class)
+	public ResponseEntity<String> UsermoneyValidationExceptions(CouponException exception){
 		return new ResponseEntity<String>(exception.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 }

@@ -22,9 +22,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/product")
 public class ProductController {
-	private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
-	private static final String SUCCESS = "success";
-	private static final String FAIL = "fail";
 
 	private final ProductService productService;
 

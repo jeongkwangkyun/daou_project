@@ -16,7 +16,7 @@ public interface PaymentService {
 	public SaveMoneyDto getSaveMoney(long userNo) throws Exception;
 	public List<PointDto> getPoint(long userNo) throws Exception;
 	public boolean registerPayment(RequestPaymentDto reqPaymentDto) throws Exception;
-	public int insertPayment(PaymentDto paymentDto) throws Exception;
+	public int insertPayment(PaymentDto paymentDto,  RequestPaymentDto reqPaymentDto) throws Exception;
 	public List<CouponDto> getCouponNoDuplicated(long userNo) throws Exception;
 	public RequestPaymentDto getAutoPayment(RequestPaymentDto orderDto) throws Exception;
 }

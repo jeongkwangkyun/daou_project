@@ -15,7 +15,6 @@
 		AND PrdP.product_no = Prd.product_no
 		GROUP BY P.pay_no
 		ORDER BY P.pay_no DESC
-
 	</select>
 	
 	<select id="getPaymentData" parameterType="long" resultType="paymentDto">
@@ -46,7 +45,7 @@
 		UPDATE point, (SELECT point_no, use_point FROM payment_point WHERE pay_no = #{payNo}) as PayPoint
 		SET point.balance_point = point.balance_point + PayPoint.use_point
 		WHERE point.point_no = PayPoint.point_no
-		AND point.expiration_yn = 'n'
+		AND timestampdiff(SECOND, now(), point.expiration_date) > 0
 	</update>
 	
 	<update id="updatePaymentTable" parameterType="long">
