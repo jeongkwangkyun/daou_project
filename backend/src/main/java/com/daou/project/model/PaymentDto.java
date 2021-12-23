@@ -18,7 +18,6 @@ public class PaymentDto {
 	private String payDate;
 	private char refundYn;
 	public PaymentDto() {};
-
 	public PaymentDto(long payNo, long savemoneyNo, long userNo, long couponNo, int totalPrice, int userMoney,
 			String payDate, char refundYn) {
 		super();

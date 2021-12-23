@@ -236,7 +236,6 @@ public class PaymentServiceImpl implements PaymentService {
 
 	private RequestPaymentDto applySavemoney(RequestPaymentDto orderDto) throws Exception {
 		int savemoney = getSaveMoney(orderDto.getUserNo()).getSaveMoney();
-
 		int userMoney = orderDto.getUserMoney();
 		if(userMoney > savemoney) {
 			orderDto.setUserMoney(userMoney-savemoney);
